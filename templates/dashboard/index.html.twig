@@ -11,6 +11,8 @@
 <div class="example-wrapper">
     {% if is_granted('ROLE_ADMIN') %}
         <p>This is the dashboard of an Admin</p>
+    {% elseif is_granted('ROLE_STAFF') %}
+        <p>This is the dashboard of a Staff Member</p>
     {% elseif is_granted('ROLE_USER') %}
         <p>This is the dashboard of a Regular User</p>
     {% endif %}

@@ -26,15 +26,15 @@ class UserFixtures extends Fixture
         $admin->setPassword($hashedPassword);
         $manager->persist($admin);
 
-        $user= new User();
-        $user->setUsername('user');
-        $user->setRoles(['ROLE_USER']);
+        $staff= new User();
+        $staff->setUsername('staff');
+        $staff->setRoles(['ROLE_STAFF']);
         $hashedPassword = $this->password_hasher->hashPassword(
-            $user,
-            'userpassword'
+            $staff,
+            'staffpassword'
         );
-        $user->setPassword($hashedPassword);
-        $manager->persist($user);
+        $staff->setPassword($hashedPassword);
+        $manager->persist($staff);
 
 
         $manager->flush();
