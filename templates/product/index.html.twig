@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}AquaFlow — Products{% endblock %}
+
+{% block body %}
+
+<div class="max-w-6xl mx-auto">
+
+  <!-- Page Header -->
+  <div class="flex items-center justify-between mb-8">
+    <h1 class="text-3xl font-bold text-blue-700 flex items-center gap-2">
+      💧 AquaFlow — <span class="text-gray-700">Products</span>
+    </h1>
+
+    <a href="{{ path('app_product_new') }}"
+       class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm transition-all duration-200">
+      ➕ New Product
+    </a>
+  </div>
+
+  {% if products is empty %}
+
+    <div class="text-center py-16 text-gray-500 text-lg">
+      📦 No products found.
+    </div>
+
+  {% else %}
+
+    <!-- Products Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      {% for product in products %}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 transition hover:shadow-md hover:-translate-y-1 duration-200">
+
+          <div class="flex items-center justify-between">
+            <div class="text-lg font-semibold text-blue-700">
+              {{ product.productname }}
+            </div>
+          </div>
+
+          <div class="mt-2 text-gray-700 flex items-center gap-2">
+            <span data-feather="tag" class="w-4 h-4 text-gray-500"></span>
+            ₱{{ product.price|number_format(2, '.', ',') }}
+          </div>
+
+          <div class="mt-4 flex gap-2">
+
+            <a href="{{ path('app_product_show', {'id': product.id}) }}"
+               class="flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition">
+              <i data-feather="eye" class="w-4 h-4"></i>
+              View
+            </a>
+
+            <a href="{{ path('app_product_edit', {'id': product.id}) }}"
+               class="flex items-center gap-1 px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 transition">
+              <i data-feather="edit" class="w-4 h-4"></i>
+              Edit
+            </a>
+
+            {{ include('product/_delete_form.html.twig', { 'product': product }) }}
+          </div>
+
+        </div>
+      {% endfor %}
+
+    </div>
+
+  {% endif %}
+</div>
+
+<script>
+  feather.replace();
+</script>
+
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}AquaFlow — Product Details{% endblock %}
+
+{% block body %}
+<style>
+    body {
+        background: linear-gradient(to bottom right, #e1f5fe, #ffffff);
+        font-family: "Poppins", sans-serif;
+        color: #02475e;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 700px;
+        margin: 60px auto;
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(2, 119, 189, 0.15);
+        animation: fadeIn 0.6s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 2rem;
+        color: #0277bd;
+        margin-bottom: 25px;
+        text-shadow: 1px 1px 2px #b3e5fc;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 25px;
+    }
+
+    th, td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #bbdefb;
+        text-align: left;
+    }
+
+    th {
+        background-color: #e3f2fd;
+        color: #01579b;
+        width: 30%;
+    }
+
+    td {
+        color: #0277bd;
+    }
+
+    .btn-container {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 10px 18px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .btn-back {
+        background: #e1f5fe;
+        color: #0277bd;
+        border: 1px solid #81d4fa;
+    }
+
+    .btn-back:hover {
+        background: #b3e5fc;
+    }
+
+
+</style>
+
+<div class="container">
+    <h1>💧 Product Details</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>ID</th>
+                <td>{{ product.id }}</td>
+            </tr>
+            <tr>
+                <th>Product Name</th>
+                <td>{{ product.ProductName }}</td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td>{{ product.Type }}</td>
+            </tr>
+            <tr>
+                <th>Price</th>
+                <td>₱{{ product.Price|number_format(2, '.', ',') }}</td>
+            </tr>
+            <tr>
+                <th>Unit</th>
+                <td>{{ product.Unit }}</td>
+            </tr>
+            <tr>
+                <th>Stock</th>
+                <td>{{ product.stock }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="btn-container">
+        <a href="{{ path('app_product_index') }}" class="btn btn-back">← Back to List</a>
+
+        
+    </div>
+</div>
+{% endblock %}

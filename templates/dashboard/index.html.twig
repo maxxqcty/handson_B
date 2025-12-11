@@ -1,21 +1,78 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello DashboardController!{% endblock %}
+{% block title %}AquaFlow — Dashboard{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<div class="min-h-screen flex">
 
-<div class="example-wrapper">
-    {% if is_granted('ROLE_ADMIN') %}
-        <p>This is the dashboard of an Admin</p>
-    {% elseif is_granted('ROLE_STAFF') %}
-        <p>This is the dashboard of a Staff Member</p>
-    {% elseif is_granted('ROLE_USER') %}
-        <p>This is the dashboard of a Regular User</p>
-    {% endif %}
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 p-6">
+
+    <!-- Topbar -->
+    <header class="flex items-center justify-between mb-6">
+      <button id="menuToggle" class="md:hidden p-2 bg-white rounded shadow">
+        <span data-feather="menu" class="w-5 h-5"></span>
+      </button>
+    </header>
+
+    <!-- STATS CARDS -->
+    <section class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+    
+
+      <div class="bg-white p-4 rounded-xl shadow-sm">
+        <div class="text-xs text-gray-500">Orders Today</div>
+        <div class="text-2xl font-bold mt-1">0</div>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl shadow-sm">
+        <div class="text-xs text-gray-500">Customers</div>
+        <div class="text-2xl font-bold mt-1">0</div>
+      </div>
+
+    
+    </section>
+
+    <!-- RECENT ORDERS -->
+    <section class="bg-white p-4 rounded-xl shadow-sm">
+      <h3 class="font-semibold mb-4">Recent Orders</h3>
+
+      {% if orders is defined and orders|length > 0 %}
+        <ul class="space-y-3">
+          {% for order in orders %}
+            <li class="flex items-center justify-between border-b pb-2">
+              <div>
+                <div class="font-medium">{{ order.customername }}</div>
+                <div class="text-xs text-gray-500">{{ order.items }}</div>
+              </div>
+              <div class="text-sm text-blue-600">
+                ₱{{ order.total }}
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-sm text-gray-500">No recent orders found.</p>
+      {% endif %}
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="mt-6 text-xs text-gray-500 text-center">
+      © {{ "now"|date("Y") }} AquaFlow — Water Refilling Service
+    </footer>
+
+  </main>
 </div>
 
+<script>
+  feather.replace();
+
+  const menuToggle = document.getElementById("menuToggle");
+  const aside = document.querySelector("aside");
+
+  if (menuToggle) {
+    menuToggle.addEventListener("click", () => {
+      aside.classList.toggle("hidden");
+    });
+  }
+</script>
 {% endblock %}

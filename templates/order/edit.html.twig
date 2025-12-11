@@ -1,0 +1,122 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Order{% endblock %}
+
+{% block body %}
+    <h1>Edit Order</h1>
+
+    {{ include('order/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_order_index') }}">back to list</a>
+
+    {{ include('order/_delete_form.html.twig') }}
+{% extends 'base.html.twig' %}
+
+{% block title %}AquaFlow — Edit Order{% endblock %}
+
+{% block body %}
+<style>
+    body {
+        background: linear-gradient(to bottom right, #e0f7fa, #ffffff);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color: #02475e;
+        margin: 0;
+        padding: 30px;
+    }
+
+    .edit-container {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        max-width: 650px;
+        margin: 50px auto;
+        padding: 40px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #0277bd;
+        margin-bottom: 25px;
+        text-shadow: 1px 1px 2px #b3e5fc;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    label {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #b3e5fc;
+        font-size: 14px;
+        transition: border-color 0.3s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        outline: none;
+        border-color: #0288d1;
+        box-shadow: 0 0 4px rgba(2, 136, 209, 0.4);
+    }
+
+    button {
+        background-color: #0288d1;
+        color: #ffffff;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #0277bd;
+    }
+
+    .links {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 25px;
+    }
+
+    .back-link {
+        text-decoration: none;
+        color: #0277bd;
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+
+    .back-link:hover {
+        color: #01579b;
+        text-decoration: underline;
+    }
+
+
+</style>
+
+<div class="edit-container">
+    <h1>💧 Edit Order</h1>
+
+    {{ include('order/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <div class="links">
+        <a href="{{ path('app_order_index') }}" class="back-link">← Back to List</a>
+       
+    </div>
+</div>
+{% endblock %}
