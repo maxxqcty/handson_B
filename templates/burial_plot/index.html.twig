@@ -1,45 +1,168 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}BurialPlot index{% endblock %}
+{% block title %}Burial Plots{% endblock %}
 
 {% block body %}
-    <h1>BurialPlot index</h1>
+    <div class="space-y-8">
+        <header class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-secondary">🗺️ Burial Plot Index</h1>
+            <a href="{{ path('app_burial_plot_new') }}"
+               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary hover:bg-primary-dark transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                <span data-feather="plus" class="w-4 h-4 mr-2"></span> Create New Plot
+            </a>
+        </header>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Plot_number</th>
-                <th>Section</th>
-                <th>Row_num</th>
-                <th>Is_occupied</th>
-                <th>Size</th>
-                <th>Notes</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for burial_plot in burial_plots %}
-            <tr>
-                <td>{{ burial_plot.id }}</td>
-                <td>{{ burial_plot.plotNumber }}</td>
-                <td>{{ burial_plot.section }}</td>
-                <td>{{ burial_plot.rowNum }}</td>
-                <td>{{ burial_plot.isOccupied ? 'Yes' : 'No' }}</td>
-                <td>{{ burial_plot.size }}</td>
-                <td>{{ burial_plot.notes }}</td>
-                <td>
-                    <a href="{{ path('app_burial_plot_show', {'id': burial_plot.id}) }}">show</a>
-                    <a href="{{ path('app_burial_plot_edit', {'id': burial_plot.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="8">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <div class="bg-surface-white p-6 rounded-xl shadow-subtle">
 
-    <a href="{{ path('app_burial_plot_new') }}">Create new</a>
+            <div class="mb-6 flex space-x-3">
+
+                <div class="relative">
+                    <select id="searchFilter" class="appearance-none block w-full p-3 border border-divider rounded-lg bg-background-light/50 text-secondary focus:ring-primary focus:border-primary transition duration-150 pr-8">
+                        <option value="all">Search All Fields</option>
+                        <option value="1">Plot Number</option>
+                        <option value="2">Section</option>
+                        <option value="3">Row Number</option>
+                        <option value="5">Size</option>
+                    </select>
+                    <span class="absolute right-3 top-3.5 pointer-events-none text-text-muted">
+                        <span data-feather="chevron-down" class="w-4 h-4"></span>
+                    </span>
+                </div>
+
+                <div class="relative flex-1">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-text-muted">
+                        <span data-feather="search" class="w-5 h-5"></span>
+                    </span>
+                    <input type="text" id="searchInput" placeholder="Enter plot number, section, or row..."
+                           class="w-full p-3 pl-10 border border-divider rounded-lg focus:ring-primary focus:border-primary transition duration-150 text-secondary placeholder-text-muted">
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table id="plotTable" class="min-w-full divide-y divide-divider">
+                    <thead class="bg-background-light">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Plot Number</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Section</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Row Num</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Occupied</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Size</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Notes</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-surface-white divide-y divide-divider" id="tableBody">
+                    {% for burial_plot in burial_plots %}
+                        <tr class="hover:bg-background-light/50 transition duration-100">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-muted">{{ burial_plot.id }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-secondary">{{ burial_plot.plotNumber }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-secondary/80">{{ burial_plot.section }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-secondary/80">{{ burial_plot.rowNum }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                {% if burial_plot.isOccupied %}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Yes</span>
+                                {% else %}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">No</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-secondary/80">{{ burial_plot.size }}</td>
+                            <td class="px-6 py-4 text-sm text-secondary/80 max-w-xs truncate" title="{{ burial_plot.notes }}">{{ burial_plot.notes }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                <a href="{{ path('app_burial_plot_show', {'id': burial_plot.id}) }}"
+                                   class="text-primary hover:text-primary-dark transition duration-150">
+                                    Show
+                                </a>
+                                <a href="{{ path('app_burial_plot_edit', {'id': burial_plot.id}) }}"
+                                   class="text-secondary hover:text-primary-dark transition duration-150">
+                                    Edit
+                                </a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="px-6 py-4 text-center text-text-muted">No burial plots found. Click "Create New Plot" to add one.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div id="noResults" class="hidden px-6 py-4 text-center text-text-muted border-t border-divider mt-4">
+                No matching plots found.
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', setupSearch);
+
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const searchFilter = document.getElementById('searchFilter');
+            const tableBody = document.getElementById('tableBody');
+            const noResultsRow = document.getElementById('noResults');
+            const rows = tableBody.getElementsByTagName('tr');
+
+            // Attach the same function to both input change and dropdown change
+            searchInput.addEventListener('keyup', filterTable);
+            searchFilter.addEventListener('change', filterTable);
+
+            function filterTable() {
+                const filterText = searchInput.value.toLowerCase().trim();
+                // Column indices for plot table:
+                // ID: 0, Plot Number: 1, Section: 2, Row Num: 3, Is Occupied: 4, Size: 5, Notes: 6
+                const columnIndex = searchFilter.value;
+                let foundResults = 0;
+
+                for (let i = 0; i < rows.length; i++) {
+                    let row = rows[i];
+                    let match = false;
+
+                    // Skip the "no records found" row if present initially
+                    if (row.getElementsByTagName('td').length < 8) {
+                        continue;
+                    }
+
+                    const cells = row.getElementsByTagName('td');
+
+                    if (columnIndex === 'all') {
+                        // Search all relevant columns (excluding ID and Actions)
+                        const searchableText = (cells[1].textContent || '') + ' ' +
+                                               (cells[2].textContent || '') + ' ' +
+                                               (cells[3].textContent || '') + ' ' +
+                                               (cells[5].textContent || '') + ' ' +
+                                               (cells[6].textContent || '');
+
+                        if (searchableText.toLowerCase().includes(filterText)) {
+                            match = true;
+                        }
+                    } else if (cells[columnIndex]) {
+                        // Search specific column
+                        const cellText = cells[columnIndex].textContent || cells[columnIndex].innerText;
+                        if (cellText.toLowerCase().includes(filterText)) {
+                            match = true;
+                        }
+                    }
+
+                    if (match) {
+                        row.style.display = ""; // Show the row
+                        foundResults++;
+                    } else {
+                        row.style.display = "none"; // Hide the row
+                    }
+                }
+
+                // Show/hide the "No matching records" message
+                // Hide the message if we have results OR if the initial table was empty AND the filter is empty
+                if (foundResults === 0 && filterText.length > 0) {
+                    noResultsRow.classList.remove('hidden');
+                } else {
+                    noResultsRow.classList.add('hidden');
+                }
+            }
+        }
+    </script>
 {% endblock %}

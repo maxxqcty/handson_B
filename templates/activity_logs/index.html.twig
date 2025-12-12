@@ -5,22 +5,23 @@
 
 {% block body %}
 
-{# AquaFlow Color Presets #}
-{% set AF_PRIMARY = 'text-blue-600' %}
-{% set AF_CARD = 'bg-white shadow-lg rounded-xl' %}
-{% set AF_TABLE_HEADER = 'bg-blue-500 text-white' %}
-{% set AF_BADGE_ADMIN = 'bg-blue-700 text-white' %}
-{% set AF_BADGE_OTHER = 'bg-gray-200 text-gray-700' %}
+{# Aesthetic Orange & Brown Color Presets #}
+{% set AF_PRIMARY = 'text-primary' %}
+{% set AF_CARD = 'bg-surface-white shadow-subtle rounded-xl' %}
+{% set AF_TABLE_HEADER = 'bg-secondary text-sidebar-text' %}
+{% set AF_BADGE_ADMIN = 'bg-primary text-white' %}
+{% set AF_BADGE_OTHER = 'bg-background-light text-secondary border border-divider' %}
 
-<div class="p-6 lg:p-8 space-y-8 min-h-screen bg-blue-50 text-gray-800">
+{# Background for the main page area #}
+<div class="p-4 md:p-8 space-y-8 min-h-screen bg-background-light text-secondary">
 
     {# ------------------------------------------------------------- #}
     {# 1. PAGE HEADER WITH SEARCH & FILTERS #}
     {# ------------------------------------------------------------- #}
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 pb-4 border-b border-blue-300">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 pb-4 border-b border-divider">
         <h1 class="text-3xl font-bold tracking-wide {{ AF_PRIMARY }} mb-3 sm:mb-0 flex items-center gap-2">
             <i data-feather="activity" class="w-7 h-7"></i>
-            Activity Logs
+            System Activity Logs
         </h1>
 
         <div class="flex items-center gap-2 flex-wrap">
@@ -28,10 +29,10 @@
                 id="logSearchInput"
                 type="text"
                 placeholder="Search logs..."
-                class="px-3 py-1.5 text-sm bg-white border border-blue-300 rounded-lg shadow-sm focus:ring focus:ring-blue-200 w-full sm:w-auto"
+                class="px-3 py-1.5 text-sm bg-background-light border border-divider rounded-lg shadow-sm focus:ring focus:ring-primary focus:border-primary w-full sm:w-auto text-secondary placeholder-text-muted"
             >
 
-            <select id="roleFilter" class="px-3 py-1.5 text-sm bg-white border border-blue-300 rounded-lg shadow-sm focus:ring focus:ring-blue-200 w-full sm:w-auto">
+            <select id="roleFilter" class="px-3 py-1.5 text-sm bg-background-light border border-divider rounded-lg shadow-sm focus:ring focus:ring-primary focus:border-primary w-full sm:w-auto text-secondary">
                 <option value="">All Roles</option>
                 <option value="ROLE_ADMIN">Admin</option>
                 <option value="GUEST">Guest</option>
@@ -39,36 +40,36 @@
 
             <button
                 id="clearFilterBtn"
-                class="px-4 py-1.5 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition w-full sm:w-auto text-sm">
+                class="px-4 py-1.5 bg-secondary text-white font-semibold rounded-lg shadow-md hover:bg-primary-dark transition w-full sm:w-auto text-sm border border-secondary hover:border-primary-dark">
                 Clear Filters
             </button>
         </div>
     </div>
 
     {# ------------------------------------------------------------- #}
-    {# 2. AQUAFLOW TABLE CARD #}
+    {# 2. THEMED TABLE CARD #}
     {# ------------------------------------------------------------- #}
-    <div class="{{ AF_CARD }} border border-blue-200 overflow-x-auto">
+    <div class="{{ AF_CARD }} border border-divider overflow-x-auto">
 
-        <table id="logsTable" class="min-w-full divide-y divide-blue-200 text-sm">
+        <table id="logsTable" class="min-w-full divide-y divide-divider text-sm">
 
             <thead>
                 <tr class="{{ AF_TABLE_HEADER }} uppercase text-xs">
-                    <th class="px-6 py-3 font-bold">User</th>
-                    <th class="px-6 py-3 font-bold">Role</th>
-                    <th class="px-6 py-3 font-bold">Action</th>
-                    <th class="px-6 py-3 font-bold">Target Data</th>
-                    <th class="px-6 py-3 font-bold">IP Address</th>
-                    <th class="px-6 py-3 font-bold">Date & Time</th>
+                    <th class="px-6 py-3 font-bold text-left">User</th>
+                    <th class="px-6 py-3 font-bold text-left">Role</th>
+                    <th class="px-6 py-3 font-bold text-left">Action</th>
+                    <th class="px-6 py-3 font-bold text-left">Target Data</th>
+                    <th class="px-6 py-3 font-bold text-left">IP Address</th>
+                    <th class="px-6 py-3 font-bold text-left">Date & Time</th>
                 </tr>
             </thead>
 
-            <tbody id="logsTableBody" class="divide-y divide-blue-100">
+            <tbody id="logsTableBody" class="divide-y divide-divider/50">
 
                 {% for log in logs %}
-                    <tr class="hover:bg-blue-50 transition">
+                    <tr class="hover:bg-background-light/50 transition duration-150">
 
-                        <td class="px-6 py-3 whitespace-nowrap font-semibold text-gray-700">
+                        <td class="px-6 py-3 whitespace-nowrap font-semibold text-secondary">
                             {{ log.userId ? log.userId.username : (log.username ?: '-') }}
                         </td>
 
@@ -84,25 +85,25 @@
                             </span>
                         </td>
 
-                        <td class="px-6 py-3 whitespace-nowrap text-blue-600 font-bold uppercase text-xs">
+                        <td class="px-6 py-3 whitespace-nowrap text-primary font-bold uppercase text-xs">
                             {{ log.action ?: '-' }}
                         </td>
 
-                        <td class="px-6 py-3 whitespace-nowrap truncate max-w-xs text-gray-600 italic text-xs">
+                        <td class="px-6 py-3 whitespace-nowrap truncate max-w-xs text-secondary/70 italic text-xs">
                             {{ log.targetData ?: '-' }}
                         </td>
 
-                        <td class="px-6 py-3 whitespace-nowrap text-xs text-gray-500 font-mono">
+                        <td class="px-6 py-3 whitespace-nowrap text-xs text-text-muted font-mono">
                             {{ log.ipAddress ?: '-' }}
                         </td>
 
-                        <td class="px-6 py-3 whitespace-nowrap text-xs text-gray-500">
+                        <td class="px-6 py-3 whitespace-nowrap text-xs text-text-muted">
                             {{ log.createdAt ? log.createdAt|date('Y-m-d H:i:s') : '-' }}
                         </td>
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="6" class="px-6 py-10 text-center text-gray-500 bg-blue-50">
+                        <td colspan="6" class="px-6 py-10 text-center text-text-muted bg-background-light">
                             <i data-feather="info" class="inline w-5 h-5 mr-1"></i>
                             No activity logs found.
                         </td>
@@ -115,9 +116,10 @@
     </div>
 
     {# ------------------------------------------------------------- #}
-    {# 3. JS FILTER FUNCTION #}
+    {# 3. JS FILTER FUNCTION (KEPT AS IS) #}
     {# ------------------------------------------------------------- #}
     <script>
+        // The JavaScript remains the same as it handles functionality, not styling.
         const searchInput = document.getElementById('logSearchInput');
         const roleFilter = document.getElementById('roleFilter');
         const clearBtn = document.getElementById('clearFilterBtn');

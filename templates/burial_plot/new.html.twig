@@ -1,11 +1,31 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New BurialPlot{% endblock %}
+{% block title %}Create New Burial Plot{% endblock %}
 
 {% block body %}
-    <h1>Create new BurialPlot</h1>
+    <div class="space-y-6">
 
-    {{ include('burial_plot/_form.html.twig') }}
+        <header class="flex items-center justify-between">
+            <h1 class="text-3xl font-bold text-secondary">🗺️ Create New Burial Plot</h1>
 
-    <a href="{{ path('app_burial_plot_index') }}">back to list</a>
+            <a href="{{ path('app_burial_plot_index') }}"
+               class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg text-secondary border border-divider hover:bg-background-light transition duration-150 focus:outline-none focus:ring-2 focus:ring-primary">
+                <span data-feather="arrow-left" class="w-4 h-4 mr-2"></span> Back to Plot List
+            </a>
+        </header>
+
+        <div class="bg-surface-white p-8 rounded-xl shadow-subtle max-w-4xl mx-auto">
+
+            <h2 class="text-xl font-semibold mb-6 text-primary border-b border-divider pb-2">Plot Details</h2>
+
+            {#
+                --- IMPORTANT ---
+                We include the form here, passing the button label.
+                The actual design of the inputs must be handled inside
+                'burial_plot/_form.html.twig'.
+            #}
+            {{ include('burial_plot/_form.html.twig', {'button_label': 'Create Plot'}) }}
+        </div>
+
+    </div>
 {% endblock %}

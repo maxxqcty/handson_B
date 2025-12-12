@@ -1,43 +1,158 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}BurialRecord index{% endblock %}
+{% block title %}Burial Records{% endblock %}
 
 {% block body %}
-    <h1>BurialRecord index</h1>
+    <div class="space-y-8">
+        <header class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-secondary">📜 Burial Records Index</h1>
+            <a href="{{ path('app_burial_record_new') }}"
+               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary hover:bg-primary-dark transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                <span data-feather="plus" class="w-4 h-4 mr-2"></span> Create New Record
+            </a>
+        </header>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Burial_date</th>
-                <th>Funeral_home</th>
-                <th>Record_created_at</th>
-                <th>Record_updated_at</th>
-                <th>Notes</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for burial_record in burial_records %}
-            <tr>
-                <td>{{ burial_record.id }}</td>
-                <td>{{ burial_record.burialDate ? burial_record.burialDate|date('Y-m-d') : '' }}</td>
-                <td>{{ burial_record.funeralHome }}</td>
-                <td>{{ burial_record.recordCreatedAt ? burial_record.recordCreatedAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ burial_record.recordUpdatedAt ? burial_record.recordUpdatedAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ burial_record.notes }}</td>
-                <td>
-                    <a href="{{ path('app_burial_record_show', {'id': burial_record.id}) }}">show</a>
-                    <a href="{{ path('app_burial_record_edit', {'id': burial_record.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="7">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <div class="bg-surface-white p-6 rounded-xl shadow-subtle">
 
-    <a href="{{ path('app_burial_record_new') }}">Create new</a>
+            <div class="mb-6 flex space-x-3">
+
+                <div class="relative">
+                    <select id="searchFilter" class="appearance-none block w-full p-3 border border-divider rounded-lg bg-background-light/50 text-secondary focus:ring-primary focus:border-primary transition duration-150 pr-8">
+                        <option value="all">Search All Fields</option>
+                        <option value="2">Funeral Home</option>
+                        <option value="5">Notes</option>
+                    </select>
+                    <span class="absolute right-3 top-3.5 pointer-events-none text-text-muted">
+                        <span data-feather="chevron-down" class="w-4 h-4"></span>
+                    </span>
+                </div>
+
+                <div class="relative flex-1">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-text-muted">
+                        <span data-feather="search" class="w-5 h-5"></span>
+                    </span>
+                    <input type="text" id="searchInput" placeholder="Search funeral home or notes..."
+                           class="w-full p-3 pl-10 border border-divider rounded-lg focus:ring-primary focus:border-primary transition duration-150 text-secondary placeholder-text-muted">
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table id="recordTable" class="min-w-full divide-y divide-divider">
+                    <thead class="bg-background-light">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Burial Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Funeral Home</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Created At</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Updated At</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Notes</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-surface-white divide-y divide-divider" id="tableBody">
+                    {% for burial_record in burial_records %}
+                        <tr class="hover:bg-background-light/50 transition duration-100">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-muted">{{ burial_record.id }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-secondary">
+                                {{ burial_record.burialDate ? burial_record.burialDate|date('M d, Y') : 'N/A' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-secondary/80">{{ burial_record.funeralHome }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-muted/80">
+                                {{ burial_record.recordCreatedAt ? burial_record.recordCreatedAt|date('Y-m-d H:i') : 'N/A' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-muted/80">
+                                {{ burial_record.recordUpdatedAt ? burial_record.recordUpdatedAt|date('Y-m-d H:i') : 'N/A' }}
+                            </td>
+                            <td class="px-6 py-4 text-sm text-secondary/80 max-w-xs truncate" title="{{ burial_record.notes }}">{{ burial_record.notes }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                <a href="{{ path('app_burial_record_show', {'id': burial_record.id}) }}"
+                                   class="inline-flex items-center px-3 py-1 border border-primary/50 text-xs font-medium rounded-md text-primary hover:bg-primary hover:text-white transition duration-150">
+                                    <span data-feather="eye" class="w-3 h-3 mr-1"></span> Show
+                                </a>
+                                <a href="{{ path('app_burial_record_edit', {'id': burial_record.id}) }}"
+                                   class="inline-flex items-center px-3 py-1 border border-secondary/50 text-xs font-medium rounded-md text-secondary hover:bg-secondary hover:text-white transition duration-150">
+                                    <span data-feather="edit-3" class="w-3 h-3 mr-1"></span> Edit
+                                </a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="px-6 py-4 text-center text-text-muted">No burial records found. Click "Create New Record" to add one.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div id="noResults" class="hidden px-6 py-4 text-center text-text-muted border-t border-divider mt-4">
+                No matching records found.
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', setupSearch);
+
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const searchFilter = document.getElementById('searchFilter');
+            const tableBody = document.getElementById('tableBody');
+            const noResultsRow = document.getElementById('noResults');
+            const rows = tableBody.getElementsByTagName('tr');
+
+            // Attach the same function to both input change and dropdown change
+            searchInput.addEventListener('keyup', filterTable);
+            searchFilter.addEventListener('change', filterTable);
+
+            function filterTable() {
+                const filterText = searchInput.value.toLowerCase().trim();
+                // Column indices: ID: 0, Burial Date: 1, Funeral Home: 2, Created At: 3, Updated At: 4, Notes: 5
+                const columnIndex = searchFilter.value;
+                let foundResults = 0;
+
+                for (let i = 0; i < rows.length; i++) {
+                    let row = rows[i];
+                    let match = false;
+
+                    // Skip the "no records found" row if present initially
+                    if (row.getElementsByTagName('td').length < 7) {
+                        continue;
+                    }
+
+                    const cells = row.getElementsByTagName('td');
+
+                    if (columnIndex === 'all') {
+                        // Search all relevant columns
+                        const searchableText = (cells[2].textContent || '') + ' ' + (cells[5].textContent || ''); // Funeral Home & Notes
+
+                        if (searchableText.toLowerCase().includes(filterText)) {
+                            match = true;
+                        }
+                    } else if (cells[columnIndex]) {
+                        // Search specific column
+                        const cellText = cells[columnIndex].textContent || cells[columnIndex].innerText;
+                        if (cellText.toLowerCase().includes(filterText)) {
+                            match = true;
+                        }
+                    }
+
+                    if (match) {
+                        row.style.display = ""; // Show the row
+                        foundResults++;
+                    } else {
+                        row.style.display = "none"; // Hide the row
+                    }
+                }
+
+                // Show/hide the "No matching records" message
+                if (foundResults === 0 && filterText.length > 0) {
+                    noResultsRow.classList.remove('hidden');
+                } else {
+                    noResultsRow.classList.add('hidden');
+                }
+            }
+        }
+    </script>
 {% endblock %}

@@ -11,129 +11,157 @@
             theme: {
                 extend: {
                     colors: {
-                        // Sleek Orange and Brown Palette
-                        'primary': '#E97451', // A warm, modern terracotta/burnt orange (Primary accent)
-                        'primary-dark': '#C95B3C', // Darker shade for hover/active states
-                        'secondary': '#4A342C', // Deep, rich, high-contrast brown for text
-                        'background-light': '#FFF8F4', // Very light, off-white/cream for main background
-                        'surface-white': '#FFFFFF', // Pure white for cards/sidebar
-                        'divider': '#F5E3D8', // Light separator color
-                        'text-muted': '#8D7B74', // Muted text/icons (soft brown-gray)
+                        // Aesthetic Orange & Brown Palette
+
+                        // Primary: Soft Terracotta/Burnt Orange
+                        'primary': '#D27F5A', // Main highlight color
+                        'primary-dark': '#B86C4B', // Darker shade for hover/active
+
+                        // Secondary: Rich Mahogany Brown/Deep Earth
+                        'secondary': '#4A342C',
+
+                        // Sidebar Colors (Darker, richer browns)
+                        'sidebar-bg': '#3A2E2A', // Deep Coffee Brown
+                        'sidebar-text': '#F5E6DA', // Creamy Off-White for high contrast
+                        'sidebar-hover': '#57423D', // Slightly lighter brown for hover
+
+                        // Active/Accent Color (Uses Primary)
+                        'sidebar-active': '#D27F5A',
+
+                        // General Background and Surface
+                        'background-light': '#FFF9F5', // Very light, warm background
+                        'surface-white': '#FFFFFF',
+                        'divider': '#6B5751', // Divider for dark sidebar
+                        'text-muted': '#A3948C', // Muted color for icons/less important text
                     },
                     boxShadow: {
-                        'subtle': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05)',
+                        'subtle': '0 4px 10px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05)',
                     },
-                    // Improved font stack for a more classic/formal feel
                     fontFamily: {
-                        'sans': ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', '"Noto Sans"', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"'],
+                        'sans': ['Poppins', 'Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', '"Noto Sans"', 'sans-serif'],
                         'serif': ['Merriweather', 'ui-serif', 'Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
                     }
                 }
             }
         }
     </script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
-
 
     <script src="https://unpkg.com/feather-icons"></script>
     {% block stylesheets %}{% endblock %}
 </head>
 
 <body class="bg-background-light text-secondary font-sans antialiased">
+
+{% set current_path = app.request.attributes.get('_route') %}
+
 <div class="min-h-screen flex">
 
-    <aside id="sidebar" class="w-64 bg-surface-white border-r border-divider flex flex-col transition-all duration-300 ease-in-out transform -translate-x-full md:translate-x-0 fixed inset-y-0 left-0 z-30 shadow-xl md:shadow-none">
-        <div class="p-6 border-b border-divider">
-            <h1 class="text-3xl font-extrabold text-primary flex items-center gap-2">
-                <span class="text-4xl leading-none text-primary">🕯️</span> 
-                <span class="text-secondary">LUMORA</span>
+    <button id="menuToggle" class="fixed top-4 left-4 z-40 p-2 md:hidden bg-primary text-white rounded-lg shadow-lg hover:bg-primary-dark transition duration-150">
+        <span data-feather="menu" class="w-6 h-6"></span>
+    </button>
+
+    <aside id="sidebar" class="w-60 bg-sidebar-bg flex flex-col transition-all duration-300 ease-in-out transform -translate-x-full md:translate-x-0 fixed inset-y-0 left-0 z-30 shadow-2xl md:shadow-none">
+
+        <div class="p-6 border-b border-divider mb-4">
+            <h1 class="text-2xl font-extrabold text-sidebar-text flex items-center gap-2">
+                <span class="text-3xl leading-none text-sidebar-active">⚱️</span>
+                <span class="font-poppins text-sidebar-text tracking-wider">LUMORA</span>
             </h1>
         </div>
 
-        <nav class="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
+        <nav class="flex-1 px-4 py-2 space-y-1 overflow-y-auto">
 
-            {# === Admin-only links === #}
             {% if is_granted('ROLE_ADMIN') %}
-                <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary font-medium hover:bg-primary-dark/10 hover:text-primary-dark transition duration-150"
-                   href="{{ path('app_dashboard') }}">
-                    <span data-feather="grid" class="w-5 h-5 text-text-muted hover:text-primary-dark"></span> Dashboard
-                </a>
+                {% set links = [
+                    {'path': 'app_dashboard', 'icon': 'grid', 'label': 'Dashboard'},
+                    {'path': 'app_deceased_index', 'icon': 'users', 'label': 'Deceased Records'},
+                    {'path': 'app_burial_plot_index', 'icon': 'map-pin', 'label': 'Burial Plots'},
+                    {'path': 'app_burial_record_index', 'icon': 'file-text', 'label': 'Burial Records'},
+                    {'path': 'app_activity_logs', 'icon': 'activity', 'label': 'Activity Logs'},
+                ] %}
 
-                <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary font-medium hover:bg-primary-dark/10 hover:text-primary-dark transition duration-150"
-                   href="{{ path('app_deceased_index') }">
-                    <span data-feather="users" class="w-5 h-5 text-text-muted hover:text-primary-dark"></span> Deceased Records
-                </a>
-
-                <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary font-medium hover:bg-primary-dark/10 hover:text-primary-dark transition duration-150"
-                   href="{{ path('app_burial_record_index') }">
-                    <span data-feather="map-pin" class="w-5 h-5 text-text-muted hover:text-primary-dark"></span> Burial Plots
-                </a>
-
-                <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary font-medium hover:bg-primary-dark/10 hover:text-primary-dark transition duration-150"
-                   href="c">
-                    <span data-feather="file-text" class="w-5 h-5 text-text-muted hover:text-primary-dark"></span> Burial Records
-                </a>
-
-                <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary font-medium hover:bg-primary-dark/10 hover:text-primary-dark transition duration-150"
-                   href="app_activity_logs">
-                    <span data-feather="activity" class="w-5 h-5 text-text-muted hover:text-primary-dark"></span> Activity Logs
-                </a>
+                {% for item in links %}
+                    {% set isActive = (current_path == item.path) %}
+                    <a class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition duration-150
+                              {% if isActive %}
+                                bg-sidebar-active text-white shadow-md
+                              {% else %}
+                                text-sidebar-text hover:bg-sidebar-hover
+                              {% endif %}"
+                       href="{{ path(item.path) }}">
+                        <span data-feather="{{ item.icon }}" class="w-5 h-5 {% if isActive %} text-white {% else %} text-text-muted {% endif %} transition duration-150"></span>
+                        {{ item.label }}
+                    </a>
+                {% endfor %}
             {% endif %}
 
-            {# === Links visible to all authenticated users === #}
-            <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary font-medium hover:bg-primary-dark/10 hover:text-primary-dark transition duration-150"
-               href="#">
-                <span data-feather="settings" class="w-5 h-5 text-text-muted hover:text-primary-dark"></span> Profile Settings
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition duration-150
+                      {% if current_path == 'app_profile_settings' %}
+                        bg-sidebar-active text-white shadow-md
+                      {% else %}
+                        text-sidebar-text hover:bg-sidebar-hover
+                      {% endif %}"
+               href="{{ path('app_profile_settings') }}">
+                <span data-feather="settings" class="w-5 h-5 {% if current_path == 'app_profile_settings' %} text-white {% else %} text-text-muted {% endif %} transition duration-150"></span> Profile Settings
             </a>
 
         </nav>
-        
-        <div class="p-4 border-t border-divider">
-            <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-100 font-medium transition duration-150"
+
+        <div class="p-4 mt-auto">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-red-300 hover:bg-red-900/50 font-medium transition duration-150"
                href="{{ path('app_logout') }}">
                 <span data-feather="log-out" class="w-5 h-5"></span> Logout
             </a>
         </div>
 
-        <div class="p-4 text-xs text-center text-text-muted bg-divider/40">
+        <div class="p-4 text-xs text-center text-text-muted bg-sidebar-hover/50">
             v1.0 — Cemetery System
         </div>
     </aside>
-    <div id="sidebar-backdrop" class="fixed inset-0 bg-secondary bg-opacity-30 z-20 hidden md:hidden"></div>
 
-    <main class="flex-1 md:ml-64 p-4 md:p-8">
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-secondary bg-opacity-50 z-20 hidden md:hidden transition-opacity duration-300 opacity-0"></div>
+
+    <main class="flex-1 md:ml-60 p-4 md:p-8">
         {% block body %}{% endblock %}
 
-        <footer class="mt-12 pt-6 border-t border-divider text-xs text-text-muted text-center">
+        <footer class="mt-12 pt-6 border-t border-secondary/10 text-xs text-secondary/70 text-center">
             © {{ "now"|date("Y") }} Cemetery Management System
         </footer>
-
     </main>
-    </div>
+</div>
 
 <script>
     feather.replace();
 
     const sidebar = document.getElementById("sidebar");
-    const menuToggle = document.getElementById("menuToggle"); 
+    const menuToggle = document.getElementById("menuToggle");
     const sidebarBackdrop = document.getElementById("sidebar-backdrop");
 
-    // Function to show the sidebar
     function showSidebar() {
         sidebar.classList.remove("-translate-x-full");
         sidebarBackdrop.classList.remove("hidden");
+        // Add opacity transition classes after 'hidden' is removed
+        setTimeout(() => {
+            sidebarBackdrop.classList.remove("opacity-0");
+        }, 10);
     }
 
-    // Function to hide the sidebar
     function hideSidebar() {
-        sidebar.classList.add("-translate-x-full");
-        sidebarBackdrop.classList.add("hidden");
+        // Start opacity transition
+        sidebarBackdrop.classList.add("opacity-0");
+        // Wait for opacity transition to finish (300ms defined in CSS)
+        setTimeout(() => {
+            sidebar.classList.add("-translate-x-full");
+            sidebarBackdrop.classList.add("hidden");
+        }, 300);
     }
 
     if (menuToggle) {
         menuToggle.addEventListener("click", showSidebar);
     }
-    
+
     if (sidebarBackdrop) {
         sidebarBackdrop.addEventListener("click", hideSidebar);
     }

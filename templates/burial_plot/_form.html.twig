@@ -1,4 +1,21 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+{{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+
+    {# Loop over all form fields for styling #}
+    {% for child in form %}
+        <div>
+            {{ form_label(child, null, {'label_attr': {'class': 'block text-gray-700 font-medium mb-1'}}) }}
+            {{ form_widget(child, {'attr': {'class': 'w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none'}}) }}
+
+            {# Display validation errors #}
+            {{ form_errors(child) }}
+        </div>
+    {% endfor %}
+
+    <div class="mt-4">
+        <button type="submit"
+        class="w-full bg-primary hover:bg-primary-dark transition duration-150 text-white font-semibold py-3 rounded-xl shadow-lg transition transform hover:scale-[1.02]">
+            {{ button_label|default('Save') }}
+        </button>
+    </div>
+
 {{ form_end(form) }}

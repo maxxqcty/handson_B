@@ -1,11 +1,30 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Deceased{% endblock %}
+{% block title %}Create New Deceased Record{% endblock %}
 
 {% block body %}
-    <h1>Create new Deceased</h1>
+    <div class="space-y-6">
 
-    {{ include('deceased/_form.html.twig') }}
+        <header class="flex items-center justify-between">
+            <h1 class="text-3xl font-bold text-secondary">📝 New Deceased Record</h1>
 
-    <a href="{{ path('app_deceased_index') }}">back to list</a>
+            <a href="{{ path('app_deceased_index') }}"
+               class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg text-secondary border border-divider hover:bg-background-light transition duration-150 focus:outline-none focus:ring-2 focus:ring-primary">
+                <span data-feather="arrow-left" class="w-4 h-4 mr-2"></span> Back to List
+            </a>
+        </header>
+
+        <div class="bg-surface-white p-8 rounded-xl shadow-subtle max-w-4xl mx-auto">
+
+            <h2 class="text-xl font-semibold mb-6 text-primary border-b border-divider pb-2">Record Details</h2>
+
+            {#
+                --- IMPORTANT ASSUMPTION ---
+                The included form (deceased/_form.html.twig) must contain the form fields and the submit button.
+                If it does not contain the submit button, you should add it here outside of the include tag.
+            #}
+            {{ include('deceased/_form.html.twig', {'button_label': 'Create Record'}) }}
+        </div>
+
+    </div>
 {% endblock %}
