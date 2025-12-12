@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}BurialPlot{% endblock %}
+
+{% block body %}
+    <h1>BurialPlot</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ burial_plot.id }}</td>
+            </tr>
+            <tr>
+                <th>Plot_number</th>
+                <td>{{ burial_plot.plotNumber }}</td>
+            </tr>
+            <tr>
+                <th>Section</th>
+                <td>{{ burial_plot.section }}</td>
+            </tr>
+            <tr>
+                <th>Row_num</th>
+                <td>{{ burial_plot.rowNum }}</td>
+            </tr>
+            <tr>
+                <th>Is_occupied</th>
+                <td>{{ burial_plot.isOccupied ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Size</th>
+                <td>{{ burial_plot.size }}</td>
+            </tr>
+            <tr>
+                <th>Notes</th>
+                <td>{{ burial_plot.notes }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_burial_plot_index') }}">back to list</a>
+
+    <a href="{{ path('app_burial_plot_edit', {'id': burial_plot.id}) }}">edit</a>
+
+    {{ include('burial_plot/_delete_form.html.twig') }}
+{% endblock %}

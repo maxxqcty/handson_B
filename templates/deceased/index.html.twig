@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Deceased index{% endblock %}
+
+{% block body %}
+    <h1>Deceased index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>First_name</th>
+                <th>Last_name</th>
+                <th>Date_of_birth</th>
+                <th>Date_of_death</th>
+                <th>Gender</th>
+                <th>Cause_of_death</th>
+                <th>Notes</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for deceased in deceaseds %}
+            <tr>
+                <td>{{ deceased.id }}</td>
+                <td>{{ deceased.firstName }}</td>
+                <td>{{ deceased.lastName }}</td>
+                <td>{{ deceased.dateOfBirth ? deceased.dateOfBirth|date('Y-m-d') : '' }}</td>
+                <td>{{ deceased.dateOfDeath ? deceased.dateOfDeath|date('Y-m-d') : '' }}</td>
+                <td>{{ deceased.gender }}</td>
+                <td>{{ deceased.causeOfDeath }}</td>
+                <td>{{ deceased.notes }}</td>
+                <td>
+                    <a href="{{ path('app_deceased_show', {'id': deceased.id}) }}">show</a>
+                    <a href="{{ path('app_deceased_edit', {'id': deceased.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_deceased_new') }}">Create new</a>
+{% endblock %}

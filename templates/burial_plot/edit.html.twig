@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit BurialPlot{% endblock %}
+
+{% block body %}
+    <h1>Edit BurialPlot</h1>
+
+    {{ include('burial_plot/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_burial_plot_index') }}">back to list</a>
+
+    {{ include('burial_plot/_delete_form.html.twig') }}
+{% endblock %}

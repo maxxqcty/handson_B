@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}BurialRecord index{% endblock %}
+
+{% block body %}
+    <h1>BurialRecord index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Burial_date</th>
+                <th>Funeral_home</th>
+                <th>Record_created_at</th>
+                <th>Record_updated_at</th>
+                <th>Notes</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for burial_record in burial_records %}
+            <tr>
+                <td>{{ burial_record.id }}</td>
+                <td>{{ burial_record.burialDate ? burial_record.burialDate|date('Y-m-d') : '' }}</td>
+                <td>{{ burial_record.funeralHome }}</td>
+                <td>{{ burial_record.recordCreatedAt ? burial_record.recordCreatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ burial_record.recordUpdatedAt ? burial_record.recordUpdatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ burial_record.notes }}</td>
+                <td>
+                    <a href="{{ path('app_burial_record_show', {'id': burial_record.id}) }}">show</a>
+                    <a href="{{ path('app_burial_record_edit', {'id': burial_record.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_burial_record_new') }}">Create new</a>
+{% endblock %}

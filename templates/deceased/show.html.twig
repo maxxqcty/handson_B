@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Deceased{% endblock %}
+
+{% block body %}
+    <h1>Deceased</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ deceased.id }}</td>
+            </tr>
+            <tr>
+                <th>First_name</th>
+                <td>{{ deceased.firstName }}</td>
+            </tr>
+            <tr>
+                <th>Last_name</th>
+                <td>{{ deceased.lastName }}</td>
+            </tr>
+            <tr>
+                <th>Date_of_birth</th>
+                <td>{{ deceased.dateOfBirth ? deceased.dateOfBirth|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Date_of_death</th>
+                <td>{{ deceased.dateOfDeath ? deceased.dateOfDeath|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Gender</th>
+                <td>{{ deceased.gender }}</td>
+            </tr>
+            <tr>
+                <th>Cause_of_death</th>
+                <td>{{ deceased.causeOfDeath }}</td>
+            </tr>
+            <tr>
+                <th>Notes</th>
+                <td>{{ deceased.notes }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_deceased_index') }}">back to list</a>
+
+    <a href="{{ path('app_deceased_edit', {'id': deceased.id}) }}">edit</a>
+
+    {{ include('deceased/_delete_form.html.twig') }}
+{% endblock %}

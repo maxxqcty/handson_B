@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit BurialRecord{% endblock %}
+
+{% block body %}
+    <h1>Edit BurialRecord</h1>
+
+    {{ include('burial_record/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_burial_record_index') }}">back to list</a>
+
+    {{ include('burial_record/_delete_form.html.twig') }}
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}BurialPlot index{% endblock %}
+
+{% block body %}
+    <h1>BurialPlot index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Plot_number</th>
+                <th>Section</th>
+                <th>Row_num</th>
+                <th>Is_occupied</th>
+                <th>Size</th>
+                <th>Notes</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for burial_plot in burial_plots %}
+            <tr>
+                <td>{{ burial_plot.id }}</td>
+                <td>{{ burial_plot.plotNumber }}</td>
+                <td>{{ burial_plot.section }}</td>
+                <td>{{ burial_plot.rowNum }}</td>
+                <td>{{ burial_plot.isOccupied ? 'Yes' : 'No' }}</td>
+                <td>{{ burial_plot.size }}</td>
+                <td>{{ burial_plot.notes }}</td>
+                <td>
+                    <a href="{{ path('app_burial_plot_show', {'id': burial_plot.id}) }}">show</a>
+                    <a href="{{ path('app_burial_plot_edit', {'id': burial_plot.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_burial_plot_new') }}">Create new</a>
+{% endblock %}

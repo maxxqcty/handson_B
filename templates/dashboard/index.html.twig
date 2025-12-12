@@ -1,116 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}AquaFlow — Dashboard{% endblock %}
+{% block title %}Hello DashboardController!{% endblock %}
 
 {% block body %}
-<div class="min-h-screen flex bg-gray-100">
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
 
-  <!-- MAIN CONTENT -->
-  <main class="flex-1 p-6">
+<div class="example-wrapper">
+    <h1>Hello {{ controller_name }}! ✅</h1>
 
-    <!-- Topbar -->
-    <header class="flex items-center justify-between mb-6">
-      <button id="menuToggle" class="md:hidden p-2 bg-white rounded-xl shadow">
-        <span data-feather="menu" class="w-6 h-6"></span>
-      </button>
-      <h1 class="text-2xl font-bold text-blue-700">Dashboard</h1>
-    </header>
-
-    <!-- STATS CARDS -->
-    <section class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-
-      <!-- Orders Today -->
-      <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-5 rounded-2xl shadow hover:shadow-lg transition text-white">
-        <div class="flex items-center justify-between">
-          <div>
-            <div class="text-sm opacity-80">Orders Today</div>
-            <div class="text-3xl font-bold mt-1">4</div>
-          </div>
-          <span data-feather="shopping-cart" class="w-10 h-10 opacity-80"></span>
-        </div>
-      </div>
-
-      <!-- Total Customers -->
-      <div class="bg-white p-5 rounded-2xl shadow hover:shadow-lg transition">
-        <div class="flex items-center justify-between">
-          <div>
-            <div class="text-sm text-gray-500">Total Customers</div>
-            <div class="text-3xl font-bold mt-1 text-gray-700">{{ stats.totalCustomers }}</div>
-          </div>
-          <span data-feather="users" class="w-10 h-10 text-blue-600"></span>
-        </div>
-      </div>
-
-      <!-- Total Revenue -->
-      <div class="bg-white p-5 rounded-2xl shadow hover:shadow-lg transition">
-        <div class="flex items-center justify-between">
-          <div>
-            <div class="text-sm text-gray-500">Total Revenue</div>
-            <div class="text-3xl font-bold mt-1 text-blue-700">
-              ₱{{ stats.totalRevenue|number_format(2) }}
-            </div>
-          </div>
-          <span data-feather="credit-card" class="w-10 h-10 text-blue-600"></span>
-        </div>
-      </div>
-
-      <!-- Products in Stock -->
-      <div class="bg-white p-5 rounded-2xl shadow hover:shadow-lg transition">
-        <div class="flex items-center justify-between">
-          <div>
-            <div class="text-sm text-gray-500">Products in Stock</div>
-            <div class="text-3xl font-bold mt-1 text-gray-700">{{ stats.productsInStock }}</div>
-          </div>
-          <span data-feather="package" class="w-10 h-10 text-blue-600"></span>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- RECENT ORDERS -->
-    <section class="bg-white p-6 rounded-2xl shadow-sm">
-      <h3 class="text-lg font-semibold text-gray-700 mb-4">Recent Orders</h3>
-
-      {% if orders is defined and orders|length > 0 %}
-        <ul class="space-y-4">
-
-          {% for order in orders %}
-            <li class="flex items-center justify-between border-b pb-3 hover:bg-gray-50 p-2 rounded transition">
-              <div>
-                <div class="font-semibold text-gray-700">{{ order.customerName }}</div>
-                <div class="text-xs text-gray-500">{{ order.items }}</div>
-              </div>
-              <div class="text-md font-semibold text-blue-600">
-                ₱{{ order.total }}
-              </div>
-            </li>
-          {% endfor %}
-
-        </ul>
-      {% else %}
-        <p class="text-sm text-gray-500">No recent orders found.</p>
-      {% endif %}
-    </section>
-
-    <!-- FOOTER -->
-    <footer class="mt-8 text-xs text-gray-500 text-center">
-      © {{ "now"|date("Y") }} AquaFlow — Water Refilling Service
-    </footer>
-
-  </main>
+    This friendly message is coming from:
+    <ul>
+        <li>Your controller at <code>C:/handson_B/src/Controller/DashboardController.php</code></li>
+        <li>Your template at <code>C:/handson_B/templates/dashboard/index.html.twig</code></li>
+    </ul>
 </div>
-
-<script>
-  feather.replace();
-
-  const menuToggle = document.getElementById("menuToggle");
-  const aside = document.querySelector("aside");
-
-  if (menuToggle && aside) {
-    menuToggle.addEventListener("click", () => {
-      aside.classList.toggle("hidden");
-    });
-  }
-</script>
-
 {% endblock %}

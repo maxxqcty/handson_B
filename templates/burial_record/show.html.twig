@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}BurialRecord{% endblock %}
+
+{% block body %}
+    <h1>BurialRecord</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ burial_record.id }}</td>
+            </tr>
+            <tr>
+                <th>Burial_date</th>
+                <td>{{ burial_record.burialDate ? burial_record.burialDate|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Funeral_home</th>
+                <td>{{ burial_record.funeralHome }}</td>
+            </tr>
+            <tr>
+                <th>Record_created_at</th>
+                <td>{{ burial_record.recordCreatedAt ? burial_record.recordCreatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Record_updated_at</th>
+                <td>{{ burial_record.recordUpdatedAt ? burial_record.recordUpdatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Notes</th>
+                <td>{{ burial_record.notes }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_burial_record_index') }}">back to list</a>
+
+    <a href="{{ path('app_burial_record_edit', {'id': burial_record.id}) }}">edit</a>
+
+    {{ include('burial_record/_delete_form.html.twig') }}
+{% endblock %}

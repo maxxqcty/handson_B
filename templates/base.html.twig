@@ -1,130 +1,142 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}AquaFlow{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Cemetery Management System{% endblock %}</title>
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            'primary': '#1d4ed8', // A modern, deep blue
-            'primary-dark': '#1e40af',
-          },
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // Sleek Orange and Brown Palette
+                        'primary': '#E97451', // A warm, modern terracotta/burnt orange (Primary accent)
+                        'primary-dark': '#C95B3C', // Darker shade for hover/active states
+                        'secondary': '#4A342C', // Deep, rich, high-contrast brown for text
+                        'background-light': '#FFF8F4', // Very light, off-white/cream for main background
+                        'surface-white': '#FFFFFF', // Pure white for cards/sidebar
+                        'divider': '#F5E3D8', // Light separator color
+                        'text-muted': '#8D7B74', // Muted text/icons (soft brown-gray)
+                    },
+                    boxShadow: {
+                        'subtle': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05)',
+                    },
+                    // Improved font stack for a more classic/formal feel
+                    fontFamily: {
+                        'sans': ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', '"Noto Sans"', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"'],
+                        'serif': ['Merriweather', 'ui-serif', 'Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
+                    }
+                }
+            }
         }
-      }
-    }
-  </script>
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
 
-  <script src="https://unpkg.com/feather-icons"></script>
 
-  {% block stylesheets %}{% endblock %}
+    <script src="https://unpkg.com/feather-icons"></script>
+    {% block stylesheets %}{% endblock %}
 </head>
 
-<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+<body class="bg-background-light text-secondary font-sans antialiased">
 <div class="min-h-screen flex">
 
-   <aside id="sidebar" class="w-64 bg-white border-r border-gray-100 flex flex-col transition-all duration-300 ease-in-out transform -translate-x-full md:translate-x-0 fixed inset-y-0 left-0 z-30 shadow-xl md:shadow-none">
-    <div class="p-6 border-b border-gray-100">
-      <h1 class="text-3xl font-extrabold text-primary flex items-center gap-2">
-        <span class="text-4xl">💧</span> AquaFlow
-      </h1>
+    <aside id="sidebar" class="w-64 bg-surface-white border-r border-divider flex flex-col transition-all duration-300 ease-in-out transform -translate-x-full md:translate-x-0 fixed inset-y-0 left-0 z-30 shadow-xl md:shadow-none">
+        <div class="p-6 border-b border-divider">
+            <h1 class="text-3xl font-extrabold text-primary flex items-center gap-2">
+                <span class="text-4xl leading-none text-primary">🕯️</span> 
+                <span class="text-secondary">LUMORA</span>
+            </h1>
+        </div>
 
+        <nav class="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
+
+            {# === Admin-only links === #}
+            {% if is_granted('ROLE_ADMIN') %}
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary font-medium hover:bg-primary-dark/10 hover:text-primary-dark transition duration-150"
+                   href="{{ path('app_dashboard') }}">
+                    <span data-feather="grid" class="w-5 h-5 text-text-muted hover:text-primary-dark"></span> Dashboard
+                </a>
+
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary font-medium hover:bg-primary-dark/10 hover:text-primary-dark transition duration-150"
+                   href="{{ path('app_deceased_index') }">
+                    <span data-feather="users" class="w-5 h-5 text-text-muted hover:text-primary-dark"></span> Deceased Records
+                </a>
+
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary font-medium hover:bg-primary-dark/10 hover:text-primary-dark transition duration-150"
+                   href="{{ path('app_burial_record_index') }">
+                    <span data-feather="map-pin" class="w-5 h-5 text-text-muted hover:text-primary-dark"></span> Burial Plots
+                </a>
+
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary font-medium hover:bg-primary-dark/10 hover:text-primary-dark transition duration-150"
+                   href="c">
+                    <span data-feather="file-text" class="w-5 h-5 text-text-muted hover:text-primary-dark"></span> Burial Records
+                </a>
+
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary font-medium hover:bg-primary-dark/10 hover:text-primary-dark transition duration-150"
+                   href="app_activity_logs">
+                    <span data-feather="activity" class="w-5 h-5 text-text-muted hover:text-primary-dark"></span> Activity Logs
+                </a>
+            {% endif %}
+
+            {# === Links visible to all authenticated users === #}
+            <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary font-medium hover:bg-primary-dark/10 hover:text-primary-dark transition duration-150"
+               href="#">
+                <span data-feather="settings" class="w-5 h-5 text-text-muted hover:text-primary-dark"></span> Profile Settings
+            </a>
+
+        </nav>
+        
+        <div class="p-4 border-t border-divider">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-100 font-medium transition duration-150"
+               href="{{ path('app_logout') }}">
+                <span data-feather="log-out" class="w-5 h-5"></span> Logout
+            </a>
+        </div>
+
+        <div class="p-4 text-xs text-center text-text-muted bg-divider/40">
+            v1.0 — Cemetery System
+        </div>
+    </aside>
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-secondary bg-opacity-30 z-20 hidden md:hidden"></div>
+
+    <main class="flex-1 md:ml-64 p-4 md:p-8">
+        {% block body %}{% endblock %}
+
+        <footer class="mt-12 pt-6 border-t border-divider text-xs text-text-muted text-center">
+            © {{ "now"|date("Y") }} Cemetery Management System
+        </footer>
+
+    </main>
     </div>
-
-    <nav class="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
-
-      {# === Admin-only links === #}
-      {% if is_granted('ROLE_ADMIN') %}
-        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-blue-50 hover:text-primary transition duration-150"
-           href="{{ path('app_dashboard') }}">
-            <span data-feather="grid" class="w-5 h-5"></span> Dashboard
-        </a>
-
-        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-blue-50 hover:text-primary transition duration-150"
-           href="{{ path('app_user_index') }}">
-            <span data-feather="settings" class="w-5 h-5"></span> User Management
-        </a>
-
-        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-blue-50 hover:text-primary transition duration-150"
-           href="{{ path('app_activity_logs') }}">
-            <span data-feather="activity" class="w-5 h-5"></span> Activity Logs
-        </a>
-      {% endif %}
-
-      {# === Links visible to all authenticated users === #}
-      <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-blue-50 hover:text-primary transition duration-150"
-         href="{{ path('app_order_index') }}">
-        <span data-feather="shopping-bag" class="w-5 h-5"></span> Orders
-      </a>
-
-      <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-blue-50 hover:text-primary transition duration-150"
-         href="{{ path('app_product_index') }}">
-        <span data-feather="package" class="w-5 h-5"></span> Products
-      </a>
-
-      <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-blue-50 hover:text-primary transition duration-150"
-         href="{{ path('app_profile_settings') }}">
-        <span data-feather="settings" class="w-5 h-5"></span> Profile Settings
-      </a>
-
-    </nav>
-    
-    <div class="p-4 border-t border-gray-100">
-        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 font-medium transition duration-150"
-           href="{{ path('app_logout') }}">
-            <span data-feather="log-out" class="w-5 h-5"></span> Logout
-        </a>
-    </div>
-
-    <div class="p-4 text-xs text-center text-gray-400 bg-gray-50">
-      v1.0 — AquaFlow
-    </div>
-  </aside>
-  
-  <div id="sidebar-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden"></div>
-
-  <main class="flex-1 md:ml-64 p-4 md:p-8">
-    </header>
-
-    {% block body %}{% endblock %}
-
-    <footer class="mt-12 pt-6 border-t border-gray-200 text-xs text-gray-500 text-center">
-      © {{ "now"|date("Y") }} AquaFlow — Water Refilling Service
-    </footer>
-
-  </main>
-</div>
 
 <script>
-  feather.replace();
+    feather.replace();
 
-  const sidebar = document.getElementById("sidebar");
-  const menuToggle = document.getElementById("menuToggle");
-  const sidebarBackdrop = document.getElementById("sidebar-backdrop");
+    const sidebar = document.getElementById("sidebar");
+    const menuToggle = document.getElementById("menuToggle"); 
+    const sidebarBackdrop = document.getElementById("sidebar-backdrop");
 
-  // Function to show the sidebar
-  function showSidebar() {
-    sidebar.classList.remove("-translate-x-full");
-    sidebarBackdrop.classList.remove("hidden");
-  }
+    // Function to show the sidebar
+    function showSidebar() {
+        sidebar.classList.remove("-translate-x-full");
+        sidebarBackdrop.classList.remove("hidden");
+    }
 
-  // Function to hide the sidebar
-  function hideSidebar() {
-    sidebar.classList.add("-translate-x-full");
-    sidebarBackdrop.classList.add("hidden");
-  }
+    // Function to hide the sidebar
+    function hideSidebar() {
+        sidebar.classList.add("-translate-x-full");
+        sidebarBackdrop.classList.add("hidden");
+    }
 
-  if (menuToggle) {
-    menuToggle.addEventListener("click", showSidebar);
-  }
-  
-  if (sidebarBackdrop) {
-      sidebarBackdrop.addEventListener("click", hideSidebar);
-  }
+    if (menuToggle) {
+        menuToggle.addEventListener("click", showSidebar);
+    }
+    
+    if (sidebarBackdrop) {
+        sidebarBackdrop.addEventListener("click", hideSidebar);
+    }
 </script>
 
 {% block javascripts %}{% endblock %}
