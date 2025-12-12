@@ -42,7 +42,22 @@ security:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         - {
               path: ^/dashboard,
-              roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_STAFF"],
+              roles: ["ROLE_ADMIN", "ROLE_STAFF"],
+          }
+
+        - {
+              path: ^/order,
+              roles: ["ROLE_ADMIN", "ROLE_STAFF"],
+          }
+
+        - {
+              path: ^/product,
+              roles: ["ROLE_ADMIN", "ROLE_STAFF"],
+          }
+
+        - {
+              path: ^/activity-logs,
+              roles: ["ROLE_ADMIN", "ROLE_STAFF"],
           }
         - { path: ^/register, roles: PUBLIC_ACCESS}
 when@test:

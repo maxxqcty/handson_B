@@ -5,68 +5,94 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}AquaFlow{% endblock %}</title>
 
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'primary': '#1d4ed8', // A modern, deep blue
+            'primary-dark': '#1e40af',
+          },
+        }
+      }
+    }
+  </script>
 
-  <!-- Icons -->
   <script src="https://unpkg.com/feather-icons"></script>
 
   {% block stylesheets %}{% endblock %}
 </head>
 
-<body class="bg-gray-100 text-gray-800 font-sans">
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
 <div class="min-h-screen flex">
 
-   <!-- Sidebar -->
-  <aside class="w-64 bg-white border-r hidden md:block">
-    <div class="p-6">
-      <h1 class="text-2xl font-bold text-blue-600">💧 AquaFlow</h1>
-      <p class="text-sm text-gray-500 mt-1">Water Refilling Dashboard</p>
+   <aside id="sidebar" class="w-64 bg-white border-r border-gray-100 flex flex-col transition-all duration-300 ease-in-out transform -translate-x-full md:translate-x-0 fixed inset-y-0 left-0 z-30 shadow-xl md:shadow-none">
+    <div class="p-6 border-b border-gray-100">
+      <h1 class="text-3xl font-extrabold text-primary flex items-center gap-2">
+        <span class="text-4xl">💧</span> AquaFlow
+      </h1>
+
     </div>
 
-    <nav class="px-4 py-2">
-      <a class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100"
-         href="{{ path('app_dashboard') }}">
-        <span data-feather="home" class="w-4 h-4"></span> Dashboard
-      </a>
+    <nav class="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
 
-      <a class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100"
+      {# === Admin-only links === #}
+      {% if is_granted('ROLE_ADMIN') %}
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-blue-50 hover:text-primary transition duration-150"
+           href="{{ path('app_dashboard') }}">
+            <span data-feather="grid" class="w-5 h-5"></span> Dashboard
+        </a>
+
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-blue-50 hover:text-primary transition duration-150"
+           href="{{ path('app_user_index') }}">
+            <span data-feather="settings" class="w-5 h-5"></span> User Management
+        </a>
+
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-blue-50 hover:text-primary transition duration-150"
+           href="{{ path('app_activity_logs') }}">
+            <span data-feather="activity" class="w-5 h-5"></span> Activity Logs
+        </a>
+      {% endif %}
+
+      {# === Links visible to all authenticated users === #}
+      <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-blue-50 hover:text-primary transition duration-150"
          href="{{ path('app_order_index') }}">
-        <span data-feather="file-text" class="w-4 h-4"></span> Orders
+        <span data-feather="shopping-bag" class="w-5 h-5"></span> Orders
       </a>
 
-      <a class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100"
+      <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-blue-50 hover:text-primary transition duration-150"
          href="{{ path('app_product_index') }}">
-        <span data-feather="package" class="w-4 h-4"></span> Products
+        <span data-feather="package" class="w-5 h-5"></span> Products
       </a>
 
-      <a class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100"
-         href="{{ path('app_activity_logs') }}">
-        <span data-feather="activity" class="w-4 h-4"></span> Activity Logs
+      <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-blue-50 hover:text-primary transition duration-150"
+         href="{{ path('app_profile_settings') }}">
+        <span data-feather="settings" class="w-5 h-5"></span> Profile Settings
       </a>
 
-    <div class="mt-auto p-6 text-xs text-gray-500">
+    </nav>
+    
+    <div class="p-4 border-t border-gray-100">
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 font-medium transition duration-150"
+           href="{{ path('app_logout') }}">
+            <span data-feather="log-out" class="w-5 h-5"></span> Logout
+        </a>
+    </div>
+
+    <div class="p-4 text-xs text-center text-gray-400 bg-gray-50">
       v1.0 — AquaFlow
     </div>
   </aside>
+  
+  <div id="sidebar-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden"></div>
 
-  <!-- MAIN CONTENT -->
-  <main class="flex-1 p-6">
-
-    <!-- TOPBAR -->
-    <header class="flex items-center justify-between mb-6">
-      <button id="menuToggle" class="md:hidden p-2 bg-white rounded shadow">
-        <span data-feather="menu" class="w-5 h-5"></span>
-      </button>
-
-       
+  <main class="flex-1 md:ml-64 p-4 md:p-8">
     </header>
 
-    <!-- MAIN PAGE CONTENT -->
     {% block body %}{% endblock %}
 
-    <!-- FOOTER -->
-    <footer class="mt-6 text-xs text-gray-500 text-center">
+    <footer class="mt-12 pt-6 border-t border-gray-200 text-xs text-gray-500 text-center">
       © {{ "now"|date("Y") }} AquaFlow — Water Refilling Service
     </footer>
 
@@ -76,12 +102,28 @@
 <script>
   feather.replace();
 
+  const sidebar = document.getElementById("sidebar");
   const menuToggle = document.getElementById("menuToggle");
-  const aside = document.querySelector("aside");
+  const sidebarBackdrop = document.getElementById("sidebar-backdrop");
+
+  // Function to show the sidebar
+  function showSidebar() {
+    sidebar.classList.remove("-translate-x-full");
+    sidebarBackdrop.classList.remove("hidden");
+  }
+
+  // Function to hide the sidebar
+  function hideSidebar() {
+    sidebar.classList.add("-translate-x-full");
+    sidebarBackdrop.classList.add("hidden");
+  }
+
   if (menuToggle) {
-    menuToggle.addEventListener("click", () => {
-      aside.classList.toggle("hidden");
-    });
+    menuToggle.addEventListener("click", showSidebar);
+  }
+  
+  if (sidebarBackdrop) {
+      sidebarBackdrop.addEventListener("click", hideSidebar);
   }
 </script>
 

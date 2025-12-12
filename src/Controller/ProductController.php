@@ -10,7 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Service\ActivityLogger;
+use App\Service\ActivityLogService;
 
 #[Route('/product')]
 final class ProductController extends AbstractController
@@ -24,7 +24,7 @@ final class ProductController extends AbstractController
     }
 
     #[Route('/new', name: 'app_product_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, ActivityLogger $activityLogger): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, ActivityLogService $activityLogService): Response
     {
         $product = new Product();
         $form = $this->createForm(ProductType::class, $product);
@@ -34,7 +34,7 @@ final class ProductController extends AbstractController
             $entityManager->persist($product);
             $entityManager->flush();
 
-              $activityLogger->log(
+              $activityLogService->log(
                 'Created Product',
                 'Product ID: ' . $product->getId()
             );

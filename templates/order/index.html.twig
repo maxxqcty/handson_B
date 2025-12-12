@@ -4,68 +4,89 @@
 
 {% block body %}
 
-<div class="max-w-6xl mx-auto">
+<div class="min-h-screen bg-gradient-to-b from-blue-50 to-white py-10 px-6">
 
-  <!-- Page Header -->
-  <div class="flex items-center justify-between mb-8">
-    <h1 class="text-3xl font-bold text-blue-700 flex items-center gap-2">
-      💧 AquaFlow — <span class="text-gray-700">Orders</span>
-    </h1>
+    <!-- Page Header -->
+    <div class="max-w-7xl mx-auto mb-10 flex items-center justify-between">
+        <h1 class="text-4xl font-extrabold text-blue-700 tracking-tight flex items-center gap-2">
+            <span class="opacity-80">💧</span> Orders
+        </h1>
 
-    <a href="{{ path('app_order_new') }}"
-       class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm transition-all duration-200">
-      ➕ New Order
-    </a>
-  </div>
-
-  {% if orders is empty %}
-
-    <div class="text-center py-16 text-gray-500 text-lg">
-      💦 No orders found.
+        <a href="{{ path('app_order_new') }}"
+           class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl shadow-lg shadow-blue-200
+                  transition-all duration-200 font-medium">
+            ➕ New Order
+        </a>
     </div>
 
-  {% else %}
-
-    <!-- Orders Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
-      {% for order in orders %}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 transition hover:shadow-md hover:-translate-y-1 duration-200">
-
-          <div class="flex items-center justify-between">
-            <div class="text-lg font-semibold text-blue-700">
-              Order #{{ order.id }}
+    {% if orders is empty %}
+        <!-- EMPTY STATE -->
+        <div class="max-w-4xl mx-auto text-center mt-24">
+            <div class="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg p-14 border border-blue-100">
+                <div class="text-6xl mb-4 opacity-60">💦</div>
+                <p class="text-xl text-gray-600">No orders found.</p>
+                <p class="text-gray-500 mt-2">Start by creating your first order.</p>
             </div>
-          </div>
+        </div>
 
-          <div class="mt-2 text-gray-700 flex items-center gap-2">
-            <span data-feather="user" class="w-4 h-4 text-gray-500"></span>
-            {{ order.customerName }}
-          </div>
+    {% else %}
+        <!-- ORDER GRID -->
+        <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 
-          <div class="mt-4 flex gap-2">
+            {% for order in orders %}
+                <div class="bg-white/70 backdrop-blur-lg border border-gray-100 rounded-2xl shadow-md
+                            hover:shadow-xl hover:-translate-y-1 transition transform duration-200 p-6">
 
-            <a href="{{ path('app_order_show', {'id': order.id}) }}"
-               class="flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition">
-              <i data-feather="eye" class="w-4 h-4"></i>
-              View
-            </a>
+                    <!-- Order Header -->
+                    <div class="flex items-center justify-between mb-5">
+                        <span class="text-xl font-semibold text-blue-800">
+                            Order #{{ order.id }}
+                        </span>
 
-            <a href="{{ path('app_order_edit', {'id': order.id}) }}"
-               class="flex items-center gap-1 px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 transition">
-              <i data-feather="edit" class="w-4 h-4"></i>
-              Edit
-            </a>
+                        <span class="px-3 py-1 rounded-lg text-sm font-medium bg-blue-100 text-blue-700">
+                            ₱{{ order.total|number_format(2, '.', ',') }}
+                        </span>
+                    </div>
 
-            {{ include('order/_delete_form.html.twig', { 'order': order }) }}
-          </div>
+                    <!-- Customer -->
+                    <div class="flex items-center gap-2 text-gray-700 mb-3">
+                        <i data-feather="user" class="w-5 h-5 text-blue-600"></i>
+                        <span class="font-medium">{{ order.customerName }}</span>
+                    </div>
+
+                    <!-- Product -->
+                    <div class="flex items-center gap-2 text-gray-700 mb-3">
+                        <i data-feather="package" class="w-5 h-5 text-blue-600"></i>
+                        <span>{{ order.product }}</span>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="flex items-start gap-2 text-gray-500 text-sm mb-4">
+                        <i data-feather="map-pin" class="w-5 h-5 text-blue-600 mt-0.5"></i>
+                        <span class="line-clamp-2">{{ order.address }}</span>
+                    </div>
+
+                    <!-- Footer Actions -->
+                    <div class="flex gap-3 mt-4">
+
+                        <a href="{{ path('app_order_show', { id: order.id }) }}"
+                           class="flex items-center gap-1 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg 
+                                  hover:bg-blue-100 transition font-medium">
+                            <i data-feather="eye" class="w-4 h-4"></i> View
+                        </a>
+
+                        <a href="{{ path('app_order_edit', { id: order.id }) }}"
+                           class="flex items-center gap-1 px-4 py-2 bg-yellow-50 text-yellow-700 rounded-lg 
+                                  hover:bg-yellow-100 transition font-medium">
+                            <i data-feather="edit" class="w-4 h-4"></i> Edit
+                        </a>
+                    </div>
+
+                </div>
+            {% endfor %}
 
         </div>
-      {% endfor %}
-
-    </div>
-
-  {% endif %}
+    {% endif %}
 </div>
 
 <script>

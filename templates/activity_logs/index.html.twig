@@ -1,164 +1,160 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Activity Logs Index{% endblock %}
+{% block title %}Activity Logs{% endblock %}
 {% block header_title %}System Activity Logs{% endblock %}
 
 {% block body %}
 
-    {# Define primary colors for consistency #}
-    {% set PRIMARY_RED = 'text-red-500' %}
-    {% set DARK_BG = 'bg-gray-900' %}
-    {% set HEADER_BG = 'bg-red-600' %}
-    {% set ADMIN_ROLE_BG = 'bg-red-800' %}
+{# AquaFlow Color Presets #}
+{% set AF_PRIMARY = 'text-blue-600' %}
+{% set AF_CARD = 'bg-white shadow-lg rounded-xl' %}
+{% set AF_TABLE_HEADER = 'bg-blue-500 text-white' %}
+{% set AF_BADGE_ADMIN = 'bg-blue-700 text-white' %}
+{% set AF_BADGE_OTHER = 'bg-gray-200 text-gray-700' %}
 
-    <div class="p-6 lg:p-8 space-y-8 min-h-screen bg-gray-950 text-gray-100">
+<div class="p-6 lg:p-8 space-y-8 min-h-screen bg-blue-50 text-gray-800">
 
-        {# ------------------------------------------------------------- #}
-        {# 1. PAGE HEADER WITH SEARCH & FILTERS #}
-        {# ------------------------------------------------------------- #}
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 pb-4 border-b border-red-900">
-            <h1 class="text-3xl font-bold uppercase tracking-wider {{ PRIMARY_RED }} mb-3 sm:mb-0">
-                <i class="fa-solid fa-clipboard-list mr-2 text-red-600"></i> Activity Logs
-            </h1>
+    {# ------------------------------------------------------------- #}
+    {# 1. PAGE HEADER WITH SEARCH & FILTERS #}
+    {# ------------------------------------------------------------- #}
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 pb-4 border-b border-blue-300">
+        <h1 class="text-3xl font-bold tracking-wide {{ AF_PRIMARY }} mb-3 sm:mb-0 flex items-center gap-2">
+            <i data-feather="activity" class="w-7 h-7"></i>
+            Activity Logs
+        </h1>
 
-            <div class="flex items-center gap-2 flex-wrap">
-                <input
-                    id="logSearchInput"
-                    type="text"
-                    placeholder="Search logs..."
-                    class="px-3 py-1.5 text-sm bg-gray-950 border border-red-700/60 rounded text-gray-200 placeholder-gray-500 focus:outline-none focus:border-red-500 w-full sm:w-auto"
-                >
+        <div class="flex items-center gap-2 flex-wrap">
+            <input
+                id="logSearchInput"
+                type="text"
+                placeholder="Search logs..."
+                class="px-3 py-1.5 text-sm bg-white border border-blue-300 rounded-lg shadow-sm focus:ring focus:ring-blue-200 w-full sm:w-auto"
+            >
 
-                <select id="roleFilter" class="px-3 py-1.5 text-sm bg-gray-950 border border-red-700/60 rounded text-gray-200 focus:outline-none focus:border-red-500 w-full sm:w-auto">
-                    <option value="">All Roles</option>
-                    <option value="ROLE_ADMIN">Admin</option>
-                    <option value="GUEST">Guest</option>
-                </select>
+            <select id="roleFilter" class="px-3 py-1.5 text-sm bg-white border border-blue-300 rounded-lg shadow-sm focus:ring focus:ring-blue-200 w-full sm:w-auto">
+                <option value="">All Roles</option>
+                <option value="ROLE_ADMIN">Admin</option>
+                <option value="GUEST">Guest</option>
+            </select>
 
-                <button
-                    id="clearFilterBtn"
-                    class="px-4 py-1.5 {{ HEADER_BG }} text-gray-900 font-bold rounded hover:bg-red-700 transition w-full sm:w-auto text-sm">
-                    Clear Filters
-                </button>
-            </div>
+            <button
+                id="clearFilterBtn"
+                class="px-4 py-1.5 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition w-full sm:w-auto text-sm">
+                Clear Filters
+            </button>
         </div>
-
-        {# ------------------------------------------------------------- #}
-        {# 2. DATA TABLE #}
-        {# ------------------------------------------------------------- #}
-        <div class="{{ DARK_BG }} rounded-lg shadow-2xl overflow-x-auto border border-red-900">
-            <table id="logsTable" class="min-w-full divide-y divide-gray-800 text-sm">
-
-                <thead>
-                    <tr class="text-left {{ HEADER_BG }} text-gray-900 uppercase tracking-wider">
-                        <th class="px-6 py-3 font-extrabold">User</th>
-                        <th class="px-6 py-3 font-extrabold">Role</th>
-                        <th class="px-6 py-3 font-extrabold">Action</th>
-                        <th class="px-6 py-3 font-extrabold">Target Data</th>
-                        <th class="px-6 py-3 font-extrabold">IP Address</th>
-                        <th class="px-6 py-3 font-extrabold">Date & Time</th>
-                    </tr>
-                </thead>
-
-                <tbody id="logsTableBody" class="divide-y divide-gray-800 text-white">
-
-                    {% for log in logs %}
-                        {# Zebra striping: using a darker bg for even rows for contrast on a dark table bg #}
-                        <tr class="hover:bg-gray-800 transition duration-150 even:bg-gray-950">
-
-                            <td class="px-6 py-3 whitespace-nowrap text-gray-100 font-semibold">
-                                {{ log.userId ? log.userId.username : (log.username ?: '-') }}
-                            </td>
-
-                            <td class="px-6 py-3 whitespace-nowrap role-cell">
-                                <span class="px-2 py-0.5 rounded-full text-xs font-bold
-                                    {% if log.role == 'ROLE_ADMIN' %}
-                                        {{ ADMIN_ROLE_BG }} text-white border border-red-700
-                                    {% else %}
-                                        bg-gray-700 text-gray-200 border border-gray-600
-                                    {% endif %}">
-                                    {{ log.role ?: 'GUEST' }}
-                                </span>
-                            </td>
-
-                            <td class="px-6 py-3 whitespace-nowrap text-red-400 font-extrabold uppercase text-xs">
-                                {{ log.action ?: '-' }}
-                            </td>
-
-                            <td class="px-6 py-3 whitespace-nowrap truncate max-w-xs text-gray-500 italic text-xs">
-                                {{ log.targetData ?: '-' }}
-                            </td>
-
-                            <td class="px-6 py-3 whitespace-nowrap text-xs text-gray-600 font-mono">
-                                {{ log.ipAddress ?: '-' }}
-                            </td>
-
-                            <td class="px-6 py-3 whitespace-nowrap text-xs text-gray-400">
-                                {{ log.createdAt ? log.createdAt|date('Y-m-d H:i:s') : '-' }}
-                            </td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="6" class="px-6 py-8 text-center text-gray-500 bg-gray-950">
-                                <i class="fa-solid fa-list-check mr-2"></i> No activity logs found.
-                            </td>
-                        </tr>
-                    {% endfor %}
-
-                </tbody>
-
-            </table>
-        </div>
-
-        {# ------------------------------------------------------------- #}
-        {# 3. JAVASCRIPT FILTER FUNCTION #}
-        {# ------------------------------------------------------------- #}
-        <script>
-            const searchInput = document.getElementById('logSearchInput');
-            const roleFilter = document.getElementById('roleFilter');
-            const clearBtn = document.getElementById('clearFilterBtn');
-            const tableBody = document.getElementById('logsTableBody');
-
-            // Get all rows in the table body, excluding any potential empty row message
-            const rows = Array.from(tableBody.querySelectorAll('tr'));
-
-            function filterLogs() {
-                const searchTerm = searchInput.value.toLowerCase();
-                const roleTerm = roleFilter.value;
-
-                rows.forEach(row => {
-                    // Check if this is the "No logs found" message row
-                    if (row.querySelector('td[colspan="6"]')) {
-                        row.style.display = 'none'; // Always hide the empty message during filtering
-                        return;
-                    }
-
-                    const rowText = row.innerText.toLowerCase();
-                    const roleCell = row.querySelector('.role-cell span');
-                    const rowRole = roleCell ? roleCell.innerText : '';
-
-                    const matchesSearch = rowText.includes(searchTerm);
-                    // Filter based on the actual text content of the role badge
-                    const matchesRole = roleTerm === '' || rowRole.includes(roleTerm.replace('ROLE_', '').toUpperCase());
-
-                    row.style.display = (matchesSearch && matchesRole) ? '' : 'none';
-                });
-
-                // Optional: Re-show the "No logs found" message if all visible rows are hidden
-                // This logic is complex for pure client-side JS on a Twig loop,
-                // but the primary filter functionality is fixed above.
-            }
-
-            searchInput.addEventListener('keyup', filterLogs);
-            roleFilter.addEventListener('change', filterLogs);
-
-            clearBtn.addEventListener('click', () => {
-                searchInput.value = '';
-                roleFilter.value = '';
-                filterLogs();
-            });
-        </script>
-
     </div>
+
+    {# ------------------------------------------------------------- #}
+    {# 2. AQUAFLOW TABLE CARD #}
+    {# ------------------------------------------------------------- #}
+    <div class="{{ AF_CARD }} border border-blue-200 overflow-x-auto">
+
+        <table id="logsTable" class="min-w-full divide-y divide-blue-200 text-sm">
+
+            <thead>
+                <tr class="{{ AF_TABLE_HEADER }} uppercase text-xs">
+                    <th class="px-6 py-3 font-bold">User</th>
+                    <th class="px-6 py-3 font-bold">Role</th>
+                    <th class="px-6 py-3 font-bold">Action</th>
+                    <th class="px-6 py-3 font-bold">Target Data</th>
+                    <th class="px-6 py-3 font-bold">IP Address</th>
+                    <th class="px-6 py-3 font-bold">Date & Time</th>
+                </tr>
+            </thead>
+
+            <tbody id="logsTableBody" class="divide-y divide-blue-100">
+
+                {% for log in logs %}
+                    <tr class="hover:bg-blue-50 transition">
+
+                        <td class="px-6 py-3 whitespace-nowrap font-semibold text-gray-700">
+                            {{ log.userId ? log.userId.username : (log.username ?: '-') }}
+                        </td>
+
+                        <td class="px-6 py-3 whitespace-nowrap role-cell">
+                            <span class="px-2 py-1 rounded-full text-xs font-semibold
+                                {% if log.role == 'ROLE_ADMIN' %}
+                                    {{ AF_BADGE_ADMIN }}
+                                {% else %}
+                                    {{ AF_BADGE_OTHER }}
+                                {% endif %}
+                            ">
+                                {{ log.role ?: 'GUEST' }}
+                            </span>
+                        </td>
+
+                        <td class="px-6 py-3 whitespace-nowrap text-blue-600 font-bold uppercase text-xs">
+                            {{ log.action ?: '-' }}
+                        </td>
+
+                        <td class="px-6 py-3 whitespace-nowrap truncate max-w-xs text-gray-600 italic text-xs">
+                            {{ log.targetData ?: '-' }}
+                        </td>
+
+                        <td class="px-6 py-3 whitespace-nowrap text-xs text-gray-500 font-mono">
+                            {{ log.ipAddress ?: '-' }}
+                        </td>
+
+                        <td class="px-6 py-3 whitespace-nowrap text-xs text-gray-500">
+                            {{ log.createdAt ? log.createdAt|date('Y-m-d H:i:s') : '-' }}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-10 text-center text-gray-500 bg-blue-50">
+                            <i data-feather="info" class="inline w-5 h-5 mr-1"></i>
+                            No activity logs found.
+                        </td>
+                    </tr>
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+    </div>
+
+    {# ------------------------------------------------------------- #}
+    {# 3. JS FILTER FUNCTION #}
+    {# ------------------------------------------------------------- #}
+    <script>
+        const searchInput = document.getElementById('logSearchInput');
+        const roleFilter = document.getElementById('roleFilter');
+        const clearBtn = document.getElementById('clearFilterBtn');
+        const tableBody = document.getElementById('logsTableBody');
+        const rows = Array.from(tableBody.querySelectorAll('tr'));
+
+        function filterLogs() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const roleTerm = roleFilter.value;
+
+            rows.forEach(row => {
+                if (row.querySelector('td[colspan="6"]')) {
+                    row.style.display = 'none';
+                    return;
+                }
+
+                const rowText = row.innerText.toLowerCase();
+                const rowRole = row.querySelector('.role-cell span')?.innerText || '';
+
+                const matchesSearch = rowText.includes(searchTerm);
+                const matchesRole =
+                    roleTerm === '' || rowRole.includes(roleTerm.replace('ROLE_', '').toUpperCase());
+
+                row.style.display = (matchesSearch && matchesRole) ? '' : 'none';
+            });
+        }
+
+        searchInput.addEventListener('keyup', filterLogs);
+        roleFilter.addEventListener('change', filterLogs);
+
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            roleFilter.value = '';
+            filterLogs();
+        });
+    </script>
+
+</div>
 
 {% endblock %}

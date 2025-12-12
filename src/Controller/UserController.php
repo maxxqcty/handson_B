@@ -10,17 +10,41 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Repository\ActivityLogRepository;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 
 #[Route('/user')]
 final class UserController extends AbstractController
 {
-    #[Route(name: 'app_user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): Response
-    {
-        return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
-        ]);
+
+    public function __construct(
+        private UserPasswordHasherInterface $passwordHasher
+    ) {}
+#[Route('/', name: 'app_user_index')]
+public function index(UserRepository $userRepository, ActivityLogRepository $activityLogRepository): Response
+{
+    if (!$this->isGranted('ROLE_ADMIN')) {
+        return $this->redirectToRoute('app_dashboard');
     }
+
+    $users = $userRepository->findAll();
+
+    $lastLogins = [];
+    foreach ($users as $user) {
+        $lastLog = $activityLogRepository->findOneBy(
+            ['userId' => $user],
+            ['createdAt' => 'DESC']
+        );
+        $lastLogins[$user->getId()] = $lastLog ? $lastLog->getCreatedAt() : null;
+    }
+
+    return $this->render('user/index.html.twig', [
+        'users' => $users,
+        'lastLogins' => $lastLogins,
+    ]);
+}
 
     #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -30,10 +54,18 @@ final class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $plainPassword = $form->get('plainPassword')->getData();
+
+            if ($plainPassword) {
+                $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
+                $user->setPassword($hashedPassword);
+            }
+
             $entityManager->persist($user);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_user_index');
         }
 
         return $this->render('user/new.html.twig', [
@@ -57,9 +89,17 @@ final class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $plainPassword = $form->get('plainPassword')->getData();
+
+            if ($plainPassword) {
+                $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
+                $user->setPassword($hashedPassword);
+            }
+
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_user_index');
         }
 
         return $this->render('user/edit.html.twig', [
@@ -76,6 +116,6 @@ final class UserController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_user_index');
     }
 }

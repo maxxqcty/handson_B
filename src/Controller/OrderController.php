@@ -3,14 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Order;
-use App\Form\OrderType;
+use App\Form\Order1Type;
 use App\Repository\OrderRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Service\ActivityLogger;
 
 #[Route('/order')]
 final class OrderController extends AbstractController
@@ -24,20 +23,15 @@ final class OrderController extends AbstractController
     }
 
     #[Route('/new', name: 'app_order_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, ActivityLogger $activityLogger): Response
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $order = new Order();
-        $form = $this->createForm(OrderType::class, $order);
+        $form = $this->createForm(Order1Type::class, $order);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($order);
             $entityManager->flush();
-
-            $activityLogger->log(
-                'Created Order',
-                'Order ID: ' . $order->getId()
-            );
 
             return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -59,7 +53,7 @@ final class OrderController extends AbstractController
     #[Route('/{id}/edit', name: 'app_order_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Order $order, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(OrderType::class, $order);
+        $form = $this->createForm(Order1Type::class, $order);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

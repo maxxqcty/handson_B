@@ -27,6 +27,9 @@ class Order
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $total = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $items = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -76,6 +79,18 @@ class Order
     public function setTotal(string $total): static
     {
         $this->total = $total;
+
+        return $this;
+    }
+
+    public function getItems(): ?string
+    {
+        return $this->items;
+    }
+
+    public function setItems(string $items): static
+    {
+        $this->items = $items;
 
         return $this;
     }
