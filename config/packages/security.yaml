@@ -40,26 +40,16 @@ security:
     # Note: Only the *first* access control that matches will be usedq
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
-        - {
-              path: ^/dashboard,
-              roles: ["ROLE_ADMIN", "ROLE_STAFF"],
-          }
+        - { path: ^/dashboard, roles: ["ROLE_ADMIN", "ROLE_STAFF"] }
 
-        - {
-              path: ^/order,
-              roles: ["ROLE_ADMIN", "ROLE_STAFF"],
-          }
+        - { path: ^/burial/plot, roles: ["ROLE_ADMIN", "ROLE_STAFF"] }
 
-        - {
-              path: ^/product,
-              roles: ["ROLE_ADMIN", "ROLE_STAFF"],
-          }
+        - { path: ^/deceased, roles: ["ROLE_ADMIN", "ROLE_STAFF"] }
 
-        - {
-              path: ^/activity-logs,
-              roles: ["ROLE_ADMIN", "ROLE_STAFF"],
-          }
-        - { path: ^/register, roles: PUBLIC_ACCESS}
+        - { path: ^/burial/record, roles: ["ROLE_ADMIN", "ROLE_STAFF"] }
+
+        - { path: ^/activity-logs, roles: ["ROLE_ADMIN", "ROLE_STAFF"] }
+        - { path: ^/register, roles: PUBLIC_ACCESS }
 when@test:
     security:
         password_hashers:

@@ -11,28 +11,17 @@
             theme: {
                 extend: {
                     colors: {
-                        // Aesthetic Orange & Brown Palette
-
-                        // Primary: Soft Terracotta/Burnt Orange
-                        'primary': '#D27F5A', // Main highlight color
-                        'primary-dark': '#B86C4B', // Darker shade for hover/active
-
-                        // Secondary: Rich Mahogany Brown/Deep Earth
+                        'primary': '#D27F5A',
+                        'primary-dark': '#B86C4B',
                         'secondary': '#4A342C',
-
-                        // Sidebar Colors (Darker, richer browns)
-                        'sidebar-bg': '#3A2E2A', // Deep Coffee Brown
-                        'sidebar-text': '#F5E6DA', // Creamy Off-White for high contrast
-                        'sidebar-hover': '#57423D', // Slightly lighter brown for hover
-
-                        // Active/Accent Color (Uses Primary)
+                        'sidebar-bg': '#3A2E2A',
+                        'sidebar-text': '#F5E6DA',
+                        'sidebar-hover': '#57423D',
                         'sidebar-active': '#D27F5A',
-
-                        // General Background and Surface
-                        'background-light': '#FFF9F5', // Very light, warm background
+                        'background-light': '#FFF9F5',
                         'surface-white': '#FFFFFF',
-                        'divider': '#6B5751', // Divider for dark sidebar
-                        'text-muted': '#A3948C', // Muted color for icons/less important text
+                        'divider': '#6B5751',
+                        'text-muted': '#A3948C',
                     },
                     boxShadow: {
                         'subtle': '0 4px 10px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05)',
@@ -73,30 +62,45 @@
 
         <nav class="flex-1 px-4 py-2 space-y-1 overflow-y-auto">
 
-            {% if is_granted('ROLE_ADMIN') %}
-                {% set links = [
-                    {'path': 'app_dashboard', 'icon': 'grid', 'label': 'Dashboard'},
-                    {'path': 'app_deceased_index', 'icon': 'users', 'label': 'Deceased Records'},
-                    {'path': 'app_burial_plot_index', 'icon': 'map-pin', 'label': 'Burial Plots'},
-                    {'path': 'app_burial_record_index', 'icon': 'file-text', 'label': 'Burial Records'},
-                    {'path': 'app_activity_logs', 'icon': 'activity', 'label': 'Activity Logs'},
-                ] %}
+            {# Define role-based links #}
+            {% set adminLinks = [
+                {'path': 'app_dashboard', 'icon': 'grid', 'label': 'Dashboard'},
+                {'path': 'app_deceased_index', 'icon': 'users', 'label': 'Deceased Records'},
+                {'path': 'app_burial_plot_index', 'icon': 'map-pin', 'label': 'Burial Plots'},
+                {'path': 'app_burial_record_index', 'icon': 'file-text', 'label': 'Burial Records'},
+                {'path': 'app_activity_logs', 'icon': 'activity', 'label': 'Activity Logs'},
+            ] %}
 
-                {% for item in links %}
-                    {% set isActive = (current_path == item.path) %}
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition duration-150
-                              {% if isActive %}
-                                bg-sidebar-active text-white shadow-md
-                              {% else %}
-                                text-sidebar-text hover:bg-sidebar-hover
-                              {% endif %}"
-                       href="{{ path(item.path) }}">
-                        <span data-feather="{{ item.icon }}" class="w-5 h-5 {% if isActive %} text-white {% else %} text-text-muted {% endif %} transition duration-150"></span>
-                        {{ item.label }}
-                    </a>
-                {% endfor %}
+            {% set staffLinks = [
+                {'path': 'app_dashboard', 'icon': 'grid', 'label': 'Dashboard'},
+                {'path': 'app_deceased_index', 'icon': 'users', 'label': 'Deceased Records'},
+                {'path': 'app_burial_plot_index', 'icon': 'map-pin', 'label': 'Burial Plots'},
+                {'path': 'app_burial_record_index', 'icon': 'file-text', 'label': 'Burial Records'},
+            ] %}
+
+            {% if is_granted('ROLE_ADMIN') %}
+                {% set links = adminLinks %}
+            {% elseif is_granted('ROLE_STAFF') %}
+                {% set links = staffLinks %}
+            {% else %}
+                {% set links = [] %}
             {% endif %}
 
+            {% for item in links %}
+                {% set isActive = (current_path == item.path) %}
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition duration-150
+                          {% if isActive %}
+                            bg-sidebar-active text-white shadow-md
+                          {% else %}
+                            text-sidebar-text hover:bg-sidebar-hover
+                          {% endif %}"
+                   href="{{ path(item.path) }}">
+                    <span data-feather="{{ item.icon }}" class="w-5 h-5 {% if isActive %} text-white {% else %} text-text-muted {% endif %} transition duration-150"></span>
+                    {{ item.label }}
+                </a>
+            {% endfor %}
+
+            {# Profile settings accessible for all roles #}
             <a class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition duration-150
                       {% if current_path == 'app_profile_settings' %}
                         bg-sidebar-active text-white shadow-md
@@ -142,16 +146,13 @@
     function showSidebar() {
         sidebar.classList.remove("-translate-x-full");
         sidebarBackdrop.classList.remove("hidden");
-        // Add opacity transition classes after 'hidden' is removed
         setTimeout(() => {
             sidebarBackdrop.classList.remove("opacity-0");
         }, 10);
     }
 
     function hideSidebar() {
-        // Start opacity transition
         sidebarBackdrop.classList.add("opacity-0");
-        // Wait for opacity transition to finish (300ms defined in CSS)
         setTimeout(() => {
             sidebar.classList.add("-translate-x-full");
             sidebarBackdrop.classList.add("hidden");

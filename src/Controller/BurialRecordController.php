@@ -10,6 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Service\ActivityLogService;
+
 
 #[Route('/burial/record')]
 final class BurialRecordController extends AbstractController
@@ -23,7 +25,7 @@ final class BurialRecordController extends AbstractController
     }
 
     #[Route('/new', name: 'app_burial_record_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, ActivityLogService $activityLogService): Response
     {
         $burialRecord = new BurialRecord();
         $form = $this->createForm(BurialRecordType::class, $burialRecord);
@@ -32,7 +34,13 @@ final class BurialRecordController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($burialRecord);
             $entityManager->flush();
-
+$activityLogService->log(
+    sprintf('Added burial record: %s', $burialRecord->getId()),
+    json_encode([
+        'id' => $burialRecord->getId(),
+        'burialDate' => $burialRecord->getBurialDate()->format('Y-m-d'),
+    ])
+);
             return $this->redirectToRoute('app_burial_record_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -51,13 +59,21 @@ final class BurialRecordController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_burial_record_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, BurialRecord $burialRecord, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, BurialRecord $burialRecord, EntityManagerInterface $entityManager, ActivityLogService $activityLogService): Response
     {
         $form = $this->createForm(BurialRecordType::class, $burialRecord);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
+
+            $activityLogService->log(
+    sprintf('Edited burial record: %s', $burialRecord->getId()),
+    json_encode([
+        'id' => $burialRecord->getId(),
+        'burialDate' => $burialRecord->getBurialDate()->format('Y-m-d'),
+    ])
+);
 
             return $this->redirectToRoute('app_burial_record_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -68,14 +84,27 @@ final class BurialRecordController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_burial_record_delete', methods: ['POST'])]
-    public function delete(Request $request, BurialRecord $burialRecord, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$burialRecord->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($burialRecord);
-            $entityManager->flush();
-        }
+   #[Route('/{id}', name: 'app_burial_record_delete', methods: ['POST'])]
+public function delete(
+    Request $request,
+    BurialRecord $burialRecord,
+    EntityManagerInterface $entityManager,
+    ActivityLogService $activityLogService // Inject the service
+): Response {
+    if ($this->isCsrfTokenValid('delete'.$burialRecord->getId(), $request->request->get('_token'))) {
+        $activityLogService->log(
+            sprintf('Deleted burial record: %s', $burialRecord->getId()),
+            json_encode([
+                'id' => $burialRecord->getId(),
+                'burialDate' => $burialRecord->getBurialDate()->format('Y-m-d'),
+            ])
+        );
 
-        return $this->redirectToRoute('app_burial_record_index', [], Response::HTTP_SEE_OTHER);
+        $entityManager->remove($burialRecord); // Actually remove the entity
+        $entityManager->flush();
     }
+
+    return $this->redirectToRoute('app_burial_record_index', [], Response::HTTP_SEE_OTHER);
+}
+
 }

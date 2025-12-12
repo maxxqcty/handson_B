@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Service\ActivityLogService;
 
 #[Route('/burial/plot')]
 final class BurialPlotController extends AbstractController
@@ -23,7 +24,7 @@ final class BurialPlotController extends AbstractController
     }
 
     #[Route('/new', name: 'app_burial_plot_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, ActivityLogService $activityLogService): Response
     {
         $burialPlot = new BurialPlot();
         $form = $this->createForm(BurialPlotType::class, $burialPlot);
@@ -32,6 +33,16 @@ final class BurialPlotController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($burialPlot);
             $entityManager->flush();
+
+               $activityLogService->log(
+    sprintf('Added burial plot: %s', $burialPlot->getPlotNumber()),
+    json_encode([
+        'id' => $burialPlot->getId(),
+        'plotNumber' => $burialPlot->getPlotNumber(),
+        'section' => $burialPlot->getSection(),
+    ])
+);
+
 
             return $this->redirectToRoute('app_burial_plot_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -51,13 +62,24 @@ final class BurialPlotController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_burial_plot_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, BurialPlot $burialPlot, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, BurialPlot $burialPlot, EntityManagerInterface $entityManager, ActivityLogService $activityLogService): Response
     {
         $form = $this->createForm(BurialPlotType::class, $burialPlot);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
+
+          $activityLogService->log(
+    sprintf('Added burial plot: %s', $burialPlot->getPlotNumber()),
+    json_encode([
+        'id' => $burialPlot->getId(),
+        'plotNumber' => $burialPlot->getPlotNumber(),
+        'section' => $burialPlot->getSection(),
+    ])
+);
+
+
 
             return $this->redirectToRoute('app_burial_plot_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -68,14 +90,25 @@ final class BurialPlotController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_burial_plot_delete', methods: ['POST'])]
-    public function delete(Request $request, BurialPlot $burialPlot, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$burialPlot->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($burialPlot);
-            $entityManager->flush();
-        }
+   #[Route('/{id}', name: 'app_burial_plot_delete', methods: ['POST'])]
+public function delete(Request $request, BurialPlot $burialPlot, EntityManagerInterface $entityManager, ActivityLogService $activityLogService): Response
+{
+    if ($this->isCsrfTokenValid('delete'.$burialPlot->getId(), $request->request->get('_token'))) {
+        $entityManager->remove($burialPlot);
+        $entityManager->flush();
 
-        return $this->redirectToRoute('app_burial_plot_index', [], Response::HTTP_SEE_OTHER);
+       $activityLogService->log(
+    sprintf('Added burial plot: %s', $burialPlot->getPlotNumber()),
+    json_encode([
+        'id' => $burialPlot->getId(),
+        'plotNumber' => $burialPlot->getPlotNumber(),
+        'section' => $burialPlot->getSection(),
+    ])
+);
+
     }
+
+    return $this->redirectToRoute('app_burial_plot_index', [], Response::HTTP_SEE_OTHER);
+}
+
 }

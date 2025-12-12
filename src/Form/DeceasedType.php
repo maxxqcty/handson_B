@@ -6,6 +6,7 @@ use App\Entity\Deceased;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class DeceasedType extends AbstractType
 {
@@ -16,7 +17,14 @@ class DeceasedType extends AbstractType
             ->add('last_name')
             ->add('date_of_birth')
             ->add('date_of_death')
-            ->add('gender')
+            ->add('gender', ChoiceType::class, [
+                'choices' => [
+                    'Male' => 'male',
+                    'Female' => 'female',
+                    'Other' => 'other',
+                ],
+                'placeholder' => 'Select Gender',
+            ])
             ->add('cause_of_death')
             ->add('notes')
         ;

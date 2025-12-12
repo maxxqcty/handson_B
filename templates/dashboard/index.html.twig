@@ -1,20 +1,155 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello DashboardController!{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<div class="py-8 px-4 md:px-6 space-y-10">
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <header>
+        <h1 class="text-4xl font-extrabold text-secondary flex items-center gap-3">
+            <span data-feather="monitor" class="w-8 h-8 text-primary"></span>
+            Cemetery Management Dashboard
+        </h1>
+        <p class="text-text-muted mt-2">Quick overview of key operational statistics and records.</p>
+    </header>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/handson_B/src/Controller/DashboardController.php</code></li>
-        <li>Your template at <code>C:/handson_B/templates/dashboard/index.html.twig</code></li>
-    </ul>
+    {# ------------------------------------------------------------- #}
+    {# 1. BURIAL PLOT STATS - Highlighted Primary Cards #}
+    {# ------------------------------------------------------------- #}
+    <h2 class="text-2xl font-bold text-secondary border-b border-divider pb-2 flex items-center gap-2">
+        <span data-feather="map-pin" class="w-5 h-5 text-primary"></span> Burial Plot Statistics
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+        {# Card 1: Total Plots (Themed Card) #}
+        <div class="bg-surface-white p-6 rounded-xl shadow-lg border border-divider/50 transition duration-300 hover:shadow-primary/30">
+            <div class="flex items-center justify-between mb-2">
+                <h5 class="text-sm font-semibold text-secondary uppercase tracking-wider">Total Plots</h5>
+                <span data-feather="layout" class="w-6 h-6 text-primary"></span>
+            </div>
+            <strong class="text-4xl font-extrabold text-secondary block mt-1">{{ stats.total_plots }}</strong>
+        </div>
+
+        {# Card 2: Occupied Plots (Themed Card) #}
+        <div class="bg-surface-white p-6 rounded-xl shadow-lg border border-divider/50 transition duration-300 hover:shadow-primary/30">
+            <div class="flex items-center justify-between mb-2">
+                <h5 class="text-sm font-semibold text-secondary uppercase tracking-wider">Occupied</h5>
+                <span data-feather="lock" class="w-6 h-6 text-red-500"></span>
+            </div>
+            <strong class="text-4xl font-extrabold text-red-500 block mt-1">{{ stats.occupied_plots }}</strong>
+        </div>
+
+        {# Card 3: Available Plots (Themed Card) #}
+        <div class="bg-surface-white p-6 rounded-xl shadow-lg border border-divider/50 transition duration-300 hover:shadow-primary/30">
+            <div class="flex items-center justify-between mb-2">
+                <h5 class="text-sm font-semibold text-secondary uppercase tracking-wider">Available</h5>
+                <span data-feather="unlock" class="w-6 h-6 text-green-500"></span>
+            </div>
+            <strong class="text-4xl font-extrabold text-green-500 block mt-1">{{ stats.available_plots }}</strong>
+        </div>
+
+        {# Card 4: Occupancy Rate (Themed Card - Primary Highlight) #}
+        <div class="bg-primary text-white p-6 rounded-xl shadow-lg border border-primary-dark transition duration-300 hover:shadow-primary/50">
+            <div class="flex items-center justify-between mb-2">
+                <h5 class="text-sm font-semibold uppercase tracking-wider">Occupancy Rate</h5>
+                <span data-feather="activity" class="w-6 h-6"></span>
+            </div>
+            <strong class="text-4xl font-extrabold block mt-1">{{ stats.occupied_percentage }}%</strong>
+        </div>
+
+    </div>
+
+    {# ------------------------------------------------------------- #}
+    {# 2. BURIAL RECORDS STATS #}
+    {# ------------------------------------------------------------- #}
+    <h2 class="text-2xl font-bold text-secondary border-b border-divider pb-2 mt-8 flex items-center gap-2">
+        <span data-feather="file-text" class="w-5 h-5 text-primary"></span> Burial Records
+    </h2>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        {# Card 5: Total Burials (Themed Card) #}
+        <div class="bg-surface-white p-6 rounded-xl shadow-subtle border border-divider/50">
+            <div class="flex items-center justify-between mb-2">
+                <h5 class="text-sm font-semibold text-secondary uppercase tracking-wider">Total Burials</h5>
+                <span data-feather="archive" class="w-6 h-6 text-text-muted"></span>
+            </div>
+            <strong class="text-3xl font-bold text-secondary block mt-1">{{ stats.total_burials }}</strong>
+        </div>
+
+        {# Card 6: Burials This Year (Themed Card) #}
+        <div class="bg-surface-white p-6 rounded-xl shadow-subtle border border-divider/50">
+            <div class="flex items-center justify-between mb-2">
+                <h5 class="text-sm font-semibold text-secondary uppercase tracking-wider">Burials This Year</h5>
+                <span data-feather="calendar" class="w-6 h-6 text-text-muted"></span>
+            </div>
+            <strong class="text-3xl font-bold text-secondary block mt-1">{{ stats.burials_current_year }}</strong>
+        </div>
+
+        {# Card 7: Top Funeral Homes (List Card) #}
+        <div class="bg-surface-white p-6 rounded-xl shadow-subtle border border-divider/50">
+            <h5 class="text-sm font-semibold text-primary uppercase tracking-wider mb-3 flex items-center gap-2">
+                <span data-feather="home" class="w-4 h-4"></span> Top Funeral Homes
+            </h5>
+            <ul class="space-y-2 text-secondary text-sm">
+                {% for home in stats.top_funeral_homes %}
+                    <li class="flex justify-between items-center border-b border-divider/30 pb-1 last:border-b-0 last:pb-0">
+                        <span class="font-medium">{{ home.name }}</span>
+                        <span class="px-2 py-0.5 text-xs font-bold rounded bg-background-light text-secondary">{{ home.total }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+
+    {# ------------------------------------------------------------- #}
+    {# 3. DECEASED STATS #}
+    {# ------------------------------------------------------------- #}
+    <h2 class="text-2xl font-bold text-secondary border-b border-divider pb-2 mt-8 flex items-center gap-2">
+        <span data-feather="heart" class="w-5 h-5 text-primary"></span> Deceased Statistics
+    </h2>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        {# Card 8: Gender Distribution (List Card) #}
+        <div class="bg-surface-white p-6 rounded-xl shadow-subtle border border-divider/50">
+            <h5 class="text-sm font-semibold text-primary uppercase tracking-wider mb-3 flex items-center gap-2">
+                <span data-feather="users" class="w-4 h-4"></span> Gender Distribution
+            </h5>
+            <ul class="space-y-2 text-secondary text-sm">
+                {% for g in stats.gender_distribution %}
+                    <li class="flex justify-between items-center border-b border-divider/30 pb-1 last:border-b-0 last:pb-0">
+                        <span class="font-medium">{{ g.gender|capitalize }}</span>
+                        <span class="px-2 py-0.5 text-xs font-bold rounded bg-background-light text-secondary">{{ g.total }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        {# Card 9: Common Causes of Death (List Card) #}
+        <div class="bg-surface-white p-6 rounded-xl shadow-subtle border border-divider/50">
+            <h5 class="text-sm font-semibold text-primary uppercase tracking-wider mb-3 flex items-center gap-2">
+                <span data-feather="x-octagon" class="w-4 h-4"></span> Common Causes of Death
+            </h5>
+            <ul class="space-y-2 text-secondary text-sm">
+                {% for c in stats.common_causes %}
+                    <li class="flex justify-between items-center border-b border-divider/30 pb-1 last:border-b-0 last:pb-0">
+                        <span class="font-medium">{{ c.cause }}</span>
+                        <span class="px-2 py-0.5 text-xs font-bold rounded bg-background-light text-secondary">{{ c.total }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        {# Card 10: Average Age at Death (Themed Card) #}
+        <div class="bg-surface-white p-6 rounded-xl shadow-subtle border border-divider/50">
+            <div class="flex items-center justify-between mb-2">
+                <h5 class="text-sm font-semibold text-secondary uppercase tracking-wider">Average Age at Death</h5>
+                <span data-feather="clock" class="w-6 h-6 text-text-muted"></span>
+            </div>
+            <strong class="text-4xl font-extrabold text-secondary block mt-1">{{ stats.avg_age }}</strong>
+        </div>
+
+    </div>
+
 </div>
 {% endblock %}
